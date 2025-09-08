@@ -35,4 +35,10 @@ public class ChessMove {
     public ChessPiece.PieceType getPromotionPiece() {
         throw new RuntimeException("Not implemented");
     }
+
+    @Override
+    public String toString() {
+        return "ChessMove{}";
+    }
+
 }
