@@ -8,14 +8,14 @@ package chess;
  */
 public class ChessMove {
 
-    private final ChessPosition startPosition;
-    private final ChessPosition endPosition;
+    private final ChessPosition start;
+    private final ChessPosition end;
     private final ChessPiece.PieceType promotionPiece;
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
+    public ChessMove(ChessPosition start, ChessPosition end,
                      ChessPiece.PieceType promotionPiece) {
-        this.startPosition = startPosition;
-        this.endPosition = endPosition;
+        this.start = start;
+        this.end = end;
         this.promotionPiece = promotionPiece;
     }
 
@@ -23,14 +23,14 @@ public class ChessMove {
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return startPosition;
+        return start;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        return endPosition;
+        return end;
     }
 
     /**
@@ -48,12 +48,12 @@ public class ChessMove {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         ChessMove that = (ChessMove) obj;
-        return (start.equals(that.start) && end.equals(that.end) && promotionPiece == move.promotionPiece);
+        return (start.equals(that.start) && end.equals(that.end) && promotionPiece == that.promotionPiece);
     }
 
     @Override
     public int hashCode() {
-        var promotionPiece = (promotionPiece == null ? 9 : promotionPiece.ordinal());
+        var promotionCode = (promotionPiece == null ? 9 : promotionPiece.ordinal());
         return (71 * start.hashCode()) + end.hashCode() + promotionCode;
     }
 
@@ -61,7 +61,6 @@ public class ChessMove {
     public String toString() {
         var p = (promotionPiece == null ? "" : ":" + promotionPiece);
         return String.format("%s:%s%s", start.toString(), end.toString(), p);
-        return "ChessMove{}";
     }
 
 }
