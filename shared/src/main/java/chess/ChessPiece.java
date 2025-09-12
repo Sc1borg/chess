@@ -50,4 +50,24 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return new HashSet<ChessMove>();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ChessPiece that = (ChessPiece) Obj;
+        return (getTeamColor() == that.getTeamColor()) && (getPieceType() == that.getPieceType());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getTeamColor().hashCode();
+        result = 31 * result + getPieceType().hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece";
+    }
 }

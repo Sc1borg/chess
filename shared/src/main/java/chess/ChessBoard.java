@@ -8,7 +8,7 @@ package chess;
  */
 public class ChessBoard {
 
-    final private ChessPiece[][] board = new ChessPiece array[8][8];
+    final private ChessPiece[][] board = new ChessPiece [8][8];
     public ChessBoard() {
         
     }
@@ -32,7 +32,7 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition pos)
     {
-        return board[pos.getRow()-1][pos.getColumn()];
+        return board[pos.getRow()-1][pos.getColumn()-1];
     }
 
     /**
