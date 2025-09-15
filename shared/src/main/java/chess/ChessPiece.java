@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -52,9 +53,119 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new HashSet<ChessMove>();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition start) {
+        ChessPiece piece = board.getPiece(start);
+        if (piece == null) {return null;}
+        Collection<ChessMove> moves = new ArrayList<>();
+        int[][] directions = getInts(piece);
+        int row;
+        int col;
+        if (piece.getPieceType() == PieceType.QUEEN || piece.getPieceType() == PieceType.BISHOP || piece.getPieceType() == PieceType.ROOK) {
+            for (int[] dir : directions) {
+                int deltaRow = dir[0];
+                int deltaCol = dir[1];
+
+                row = start.getRow();
+                col = start.getColumn();
+
+                while (true) {
+                    row += deltaRow;
+                    col += deltaCol;
+                    if (row < 1 || row > 8 || col < 1 || col > 8) {
+                        break;
+                    }
+                    ChessPosition pos = new ChessPosition(row, col);
+                    var piecePos = board.getPiece(pos);
+                    if (piecePos == null) {
+                        moves.add(new ChessMove(start, pos, null));
+                    } else if (piecePos.getTeamColor() != piece.getTeamColor()) {
+                        moves.add(new ChessMove(start, pos, null));
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        else if (piece.getPieceType() == PieceType.KING || piece.getPieceType() == PieceType.KNIGHT) {
+            for (int[] dir : directions) {
+                int deltaRow = dir[0];
+                int deltaCol = dir[1];
+
+                row = start.getRow();
+                col = start.getColumn();
+                row += deltaRow;
+                col += deltaCol;
+
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
+                    continue;
+                }
+                ChessPosition pos = new ChessPosition(row, col);
+                var piecePos = board.getPiece(pos);
+                if (piecePos == null) {
+                    moves.add(new ChessMove(start, pos, null));
+                } else if (piecePos.getTeamColor() != piece.getTeamColor()) {
+                    moves.add(new ChessMove(start, pos, null));
+                }
+            }
+        }
+        return moves;
     }
+
+    private static int[][] getInts(ChessPiece piece) {
+        int[][] directions = {
+                {}
+        };
+        if (piece.getPieceType() == PieceType.ROOK) {
+            directions = new int[][]{
+                    {-1, 0}, //Up
+                    {0, -1}, //Right
+                    {1, 0}, //Down
+                    {0, 1}, //Left
+            };
+        }
+        if (piece.getPieceType() == PieceType.BISHOP) {
+            directions = new int[][]{
+                    {-1, -1},
+                    {1, -1},
+                    {1, 1},
+                    {-1, 1},
+            };
+        }
+        if (piece.getPieceType() == PieceType.PAWN) {
+            directions = new int[][]{
+                    {-1, 0},
+                    {-1, 1},
+                    {-1, -1}
+            };
+        }
+        if (piece.getPieceType() == PieceType.KING || piece.getPieceType() == PieceType.QUEEN) {
+            directions = new int[][]{
+                    {-1, 0},
+                    {-1, 1},
+                    {-1, -1},
+                    {1, 0},
+                    {1, 1},
+                    {0, 1},
+                    {0, -1},
+                    {1, -1}
+            };
+        }
+        if (piece.getPieceType() == PieceType.KNIGHT) {
+            directions = new int[][]{
+                    {-1, 2},
+                    {-2, 1},
+                    {1, 2},
+                    {2, 1},
+                    {2, -1},
+                    {1, -2},
+                    {-1, -2},
+                    {-2, -1}
+            };
+        }
+        return directions;
+    }
+
 
     @Override
     public boolean equals(Object obj) {

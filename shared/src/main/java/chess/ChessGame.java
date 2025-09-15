@@ -49,43 +49,44 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition start) {
-        ChessPiece piece = board.getPiece(start);
-        if (piece == null) {return null;}
-        int[][] directions = {
-                {-1, 0}, //Up
-                {0, -1}, //Right
-                {1, 0}, //Down
-                {0, 1}, //Left
-        };
-        Collection<ChessMove> moves = new ArrayList<>();
-        if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
-            int row;
-            int col;
-            for (int[] dir : directions) {
-                int deltaRow = dir[0];
-                int deltaCol = dir[1];
-
-                row = start.getRow();
-                col = start.getColumn();
-
-                while (true) {
-                    row += deltaRow;
-                    col += deltaCol;
-                    if (row < 0 || row > 7 || col < 0 || col > 7) {
-                      break;
-                    }
-                    ChessPosition pos = new ChessPosition(row, col);
-                    var piecePos = board.getPiece(pos);
-                    if (piecePos == null) { moves.add(new ChessMove(start, pos, null));}
-                    else if (piecePos.getTeamColor() != piece.getTeamColor()) {
-                        moves.add(new ChessMove(start, pos, null));
-                        break;
-                    }
-                    else {break;}
-                }
-            }
-        }
-        return moves;
+//        ChessPiece piece = board.getPiece(start);
+//        if (piece == null) {return null;}
+//        int[][] directions = {
+//                {-1, 0}, //Up
+//                {0, -1}, //Right
+//                {1, 0}, //Down
+//                {0, 1}, //Left
+//        };
+//        Collection<ChessMove> moves = new ArrayList<>();
+//        if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
+//            int row;
+//            int col;
+//            for (int[] dir : directions) {
+//                int deltaRow = dir[0];
+//                int deltaCol = dir[1];
+//
+//                row = start.getRow();
+//                col = start.getColumn();
+//
+//                while (true) {
+//                    row += deltaRow;
+//                    col += deltaCol;
+//                    if (row < 0 || row > 7 || col < 0 || col > 7) {
+//                      break;
+//                    }
+//                    ChessPosition pos = new ChessPosition(row, col);
+//                    var piecePos = board.getPiece(pos);
+//                    if (piecePos == null) { moves.add(new ChessMove(start, pos, null));}
+//                    else if (piecePos.getTeamColor() != piece.getTeamColor()) {
+//                        moves.add(new ChessMove(start, pos, null));
+//                        break;
+//                    }
+//                    else {break;}
+//                }
+//            }
+//        }
+//        return moves;
+        throw new RuntimeException("Not implemented");
     }
 
     /**
