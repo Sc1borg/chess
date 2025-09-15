@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -42,38 +44,48 @@ public class ChessGame {
     /**
      * Gets a valid moves for a piece at the given location
      *
-     * @param startPosition the piece to get valid moves for
+     * @param start the piece to get valid moves for
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition start) {
         ChessPiece piece = board.getPiece(start);
-        Collection<ChessMove> moves;
-        if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
-            int row = start.getRow();
-            int col = start.getColumn();
-            while (row < 8) {
-                row+=1;
-                ChessPosition pos = new ChessPosition(row, col);
-                if (board.getPiece(pos) == null) { moves.add(new ChessMove(start, pos, null));}
-                else-if (board.getPiece(pos).getTeamColor() != piece.getTeamColor()) {
-                    moves.add(new ChessMove(start, pos, null));
-                    break;
+        if (piece == null) {return null;}
+        int[][] directions = {
+                {-1, 0}, //Up
+                {0, -1}, //Right
+                {1, 0}, //Down
+                {0, 1}, //Left
+        };
+        Collection<ChessMove> moves = new ArrayList<>();
+        if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
+            int row;
+            int col;
+            for (int[] dir : directions) {
+                int deltaRow = dir[0];
+                int deltaCol = dir[1];
+
+                row = start.getRow();
+                col = start.getColumn();
+
+                while (true) {
+                    row += deltaRow;
+                    col += deltaCol;
+                    if (row < 0 || row > 7 || col < 0 || col > 7) {
+                      break;
+                    }
+                    ChessPosition pos = new ChessPosition(row, col);
+                    var piecePos = board.getPiece(pos);
+                    if (piecePos == null) { moves.add(new ChessMove(start, pos, null));}
+                    else if (piecePos.getTeamColor() != piece.getTeamColor()) {
+                        moves.add(new ChessMove(start, pos, null));
+                        break;
+                    }
+                    else {break;}
                 }
-                else {break;}
-            }
-            row = start.getRow();
-            while (row > 0) {
-                row-=1;
-                ChessPosition pos = new ChessPosition(row, col);
-                if (board.getPiece(pos) == null) { moves.add(new ChessMove(start, pos, null));}
-                else-if (board.getPiece(pos).getTeamColor() != piece.getTeamColor()) {
-                    moves.add(new ChessMove(start, pos, null));
-                    break;
-                }
-                else {break;}
             }
         }
+        return moves;
     }
 
     /**
@@ -120,7 +132,7 @@ public class ChessGame {
     /**
      * Sets this game's chessboard with a given board
      *
-     * @param board the new board to use
+     * @param board1 the new board to use
      */
     public void setBoard(ChessBoard board1) {
         ChessBoard board = board1;
