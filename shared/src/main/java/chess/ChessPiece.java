@@ -109,6 +109,50 @@ public class ChessPiece {
                 }
             }
         }
+        else if (piece.getPieceType() == PieceType.PAWN){
+            for (int[] dir : directions) {
+                int deltaRow = dir[0];
+                int deltaCol = dir[1];
+
+                row = start.getRow();
+                col = start.getColumn();
+                row += deltaRow;
+                col += deltaCol;
+
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
+                    continue;
+                }
+                ChessPosition pos = new ChessPosition(row, col);
+                var piecePos = board.getPiece(pos);
+                if (piecePos == null) {
+                    if (col == start.getColumn()) {
+                        moves.add(new ChessMove(start, pos, null));
+                    }
+                    else {continue;}
+                }
+                if (col != start.getColumn() && piecePos.getTeamColor() != piece.getTeamColor()) {
+                    moves.add(new ChessMove(start, pos, null));
+                }
+                if (start.getRow() == 2 && piecePos == null && piece.getTeamColor()== ChessGame.TeamColor.WHITE) {
+                    row += deltaRow;
+                    pos = new ChessPosition(row, col);
+                    piecePos = board.getPiece(pos);
+                    if (piecePos == null) {
+                        moves.add(new ChessMove(start, pos, null));
+                    }
+                }
+                if (start.getRow() == 7 && piecePos == null && piece.getTeamColor()== ChessGame.TeamColor.BLACK) {
+                    row += deltaRow;
+                    pos = new ChessPosition(row, col);
+                    piecePos = board.getPiece(pos);
+                    if (piecePos == null) {
+                        moves.add(new ChessMove(start, pos, null));
+                    }
+
+                }
+
+            }
+        }
         return moves;
     }
 
@@ -132,11 +176,18 @@ public class ChessPiece {
                     {-1, 1},
             };
         }
-        if (piece.getPieceType() == PieceType.PAWN) {
+        if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            directions = new int[][]{
+                    {1, 0},
+                    {1, 1},
+                    {1, -1}
+            };
+        }
+        if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             directions = new int[][]{
                     {-1, 0},
-                    {-1, 1},
-                    {-1, -1}
+                    {-1, -1},
+                    {-1, 1}
             };
         }
         if (piece.getPieceType() == PieceType.KING || piece.getPieceType() == PieceType.QUEEN) {
