@@ -126,12 +126,24 @@ public class ChessPiece {
                 var piecePos = board.getPiece(pos);
                 if (piecePos == null) {
                     if (col == start.getColumn()) {
-                        moves.add(new ChessMove(start, pos, null));
+                        if (row == 8 || row == 1) {
+                            for (var promo : PieceType.values()) {
+                                if (promo == PieceType.PAWN || promo == PieceType.KING) {continue;}
+                                moves.add(new ChessMove(start, pos, promo));
+                            }
+                        }
+                        else {moves.add(new ChessMove(start, pos, null));}
                     }
                     else {continue;}
                 }
                 if (col != start.getColumn() && piecePos.getTeamColor() != piece.getTeamColor()) {
-                    moves.add(new ChessMove(start, pos, null));
+                    if (row == 8 || row == 1) {
+                        for (var promo : PieceType.values()) {
+                            if (promo == PieceType.PAWN || promo == PieceType.KING) {continue;}
+                            moves.add(new ChessMove(start, pos, promo));
+                        }
+                    }
+                    else {moves.add(new ChessMove(start, pos, null));}
                 }
                 if (start.getRow() == 2 && piecePos == null && piece.getTeamColor()== ChessGame.TeamColor.WHITE) {
                     row += deltaRow;
