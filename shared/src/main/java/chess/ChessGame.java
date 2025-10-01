@@ -2,7 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -13,15 +13,16 @@ import java.util.List;
 public class ChessGame {
     ChessBoard board = new ChessBoard();
 
+    TeamColor turn;
     public ChessGame() {
-
+        turn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return turn;
     }
 
     /**
@@ -30,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        turn=team;
     }
 
     /**
@@ -49,43 +50,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition start) {
-//        ChessPiece piece = board.getPiece(start);
-//        if (piece == null) {return null;}
-//        int[][] directions = {
-//                {-1, 0}, //Up
-//                {0, -1}, //Right
-//                {1, 0}, //Down
-//                {0, 1}, //Left
-//        };
-//        Collection<ChessMove> moves = new ArrayList<>();
-//        if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
-//            int row;
-//            int col;
-//            for (int[] dir : directions) {
-//                int deltaRow = dir[0];
-//                int deltaCol = dir[1];
-//
-//                row = start.getRow();
-//                col = start.getColumn();
-//
-//                while (true) {
-//                    row += deltaRow;
-//                    col += deltaCol;
-//                    if (row < 0 || row > 7 || col < 0 || col > 7) {
-//                      break;
-//                    }
-//                    ChessPosition pos = new ChessPosition(row, col);
-//                    var piecePos = board.getPiece(pos);
-//                    if (piecePos == null) { moves.add(new ChessMove(start, pos, null));}
-//                    else if (piecePos.getTeamColor() != piece.getTeamColor()) {
-//                        moves.add(new ChessMove(start, pos, null));
-//                        break;
-//                    }
-//                    else {break;}
-//                }
-//            }
-//        }
-//        return moves;
+        Collection<ChessMove> moves = ChessPiece.pieceMoves(board, start);
         throw new RuntimeException("Not implemented");
     }
 
@@ -116,7 +81,20 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+        for (int x = 1; x<8; x++) {
+            for (int y = 1; y<8; y++) {
+                ChessPosition pos = new ChessPosition(x,y);
+                if (board.getPiece(pos) == ChessPiece.PieceType.KING && board.getPiece(pos).getTeamColor()==teamColor) {
+                    if (validMoves(pos) == null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -53,7 +53,7 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition start) {
+    public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition start) {
         ChessPiece piece = board.getPiece(start);
         if (piece == null) {return null;}
         Collection<ChessMove> moves = new ArrayList<>();
