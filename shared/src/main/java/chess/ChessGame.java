@@ -50,8 +50,17 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition start) {
+        turn = getTeamTurn();
         Collection<ChessMove> moves = ChessPiece.pieceMoves(board, start);
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = new ArrayList();
+        for (var move : moves) {
+            ChessBoard tempBoard = board.copy();
+            tempBoard.makeMove(move);
+            if (!isInCheck(turn)) {
+                validMoves.add(move);
+            }
+        }
+        return validMoves();
     }
 
     /**
