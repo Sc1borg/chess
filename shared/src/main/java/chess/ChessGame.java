@@ -71,7 +71,104 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int x = 1; x<9; x++) {
+            for (int y = 1; y<9; y++) {
+                ChessPosition pos = new ChessPosition(x,y);
+                if (board.getPiece(pos).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(pos).getTeamColor()==teamColor) {
+                    return kingCheck(pos)
+                }
+            }
+        }
+    }
+    private boolean kingCheck(ChessPosition start) {
+        teamColor = start.getTeamColor()
+        int[][] straight = {
+            {1,0},
+            {0,1},
+            {-1,0},
+            {0,-1}
+        };
+        int[][] diagonal = {
+            {1,1},
+            {1,-1},
+            {-1,1},
+            {-1, -1}
+        };
+        int[][] knightMoves = {
+            {2, 1},
+            {2, -1},
+            {-2, 1},
+            {-2, -1},
+            {1, 2},
+            {1, -2},
+            {-1, 2},
+            {-1, -2}
+        };
+        for (int[] dir : straight) {
+            int deltaRow = dir[0];
+            int deltaCol = dir[1];
+
+            row = start.getRow();
+            col = start.getColumn();
+
+            while (true) {
+                row += deltaRow;
+                col += deltaCol;
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
+                    break;
+                }
+                ChessPosition pos = new ChessPosition(row, col);
+                var piecePos = board.getPiece(pos);
+                if (piecePos != null) {
+                    if (piecePos.getTeamColor() != teamColor && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
+                        return true;
+                    }
+                }
+            break;
+            }
+        }
+        for (int[] dir : diagonal) {
+            int deltaRow = dir[0];
+            int delaCol = dir[1];
+
+            row = start.getRow();
+            col = start.getColumn();
+
+            while (true) {
+                row += deltaRow;
+                col += deltaCol;
+                if (row <1 || row > 8 || col < 1 || col > 8) {
+                    break;
+                }
+                ChessPosition pos = new ChessPosition(row, col);
+                var piecePos = board.getPiece(pos);
+                if (piecePos != null) {
+                    if (piecePos.getTeamColor() != teamColor && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.BISHOP)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        for (int[] dir : knightMoves) {
+            int deltaRow = dir[0];
+            int delaCol = dir[1];
+
+            row = start.getRow();
+            col = start.getColumn();
+            
+            row += deltaRow;
+            col += deltaCol;
+            if (row <1 || row > 8 || col < 1 || col > 8) {
+                break;
+            }
+            ChessPosition pos = new ChessPosition(row, col);
+            var piecePos = board.getPiece(pos);
+            if (piecePos != null) {
+                if (piecePos.getTeamColor() != teamColor && piecePos.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                    return true;
+                }
+            }
+        }
     }
 
     /**
