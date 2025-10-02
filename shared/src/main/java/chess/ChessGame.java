@@ -114,7 +114,11 @@ public class ChessGame {
      * @param board1 the new board to use
      */
     public void setBoard(ChessBoard board1) {
-        ChessBoard board = board1;
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                board.getBoard()[x][y] = board1.getBoard()[x][y];
+            }
+        }
     }
 
     /**
