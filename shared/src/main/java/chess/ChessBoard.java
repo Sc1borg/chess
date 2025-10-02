@@ -73,6 +73,8 @@ public class ChessBoard {
         board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
     }
 
+    public ChessPiece[][] getBoard() {return board;}
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
