@@ -73,6 +73,17 @@ public class ChessBoard {
         board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
     }
 
+    public static ChessBoard copy() {
+        ChessBoard newBoard = new ChessBoard();
+        for (x = 1; x <=8; x++) {
+            for (y = 1; y<=8; y++) {
+                ChessPosition pos = new ChessPosition(x,y);
+                newBoard.addPiece(pos, board.get(pos));
+            }
+        }
+        return newBoard;
+    }
+
     public ChessPiece[][] getBoard() {return board;}
 
     @Override
