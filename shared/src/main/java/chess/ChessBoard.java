@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    final private ChessPiece[][] board = new ChessPiece [8][8];
+    static final private ChessPiece[][] board = new ChessPiece [8][8];
     public ChessBoard() {
         
     }
@@ -19,7 +19,7 @@ public class ChessBoard {
     /**
      * Adds a chess piece to the chessboard
      *
-     * @param position where to add the piece to
+     * @param pos where to add the piece to
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition pos, ChessPiece piece) {
@@ -29,7 +29,7 @@ public class ChessBoard {
     /**
      * Gets a chess piece on the chessboard
      *
-     * @param position The position to get the piece from
+     * @param pos The position to get the piece from
      * @return Either the piece at the position, or null if no piece is at that
      * position
      */
@@ -71,6 +71,14 @@ public class ChessBoard {
         board[7][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
         board[7][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
         board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+    }
+
+    public static void setBoard(ChessBoard board1) {
+        for (int y = 0; y<8; y++) {
+            for (int x = 0; x<8; x++) {
+                board[x][y] = board1[x][y];
+            }
+        }
     }
 
     @Override

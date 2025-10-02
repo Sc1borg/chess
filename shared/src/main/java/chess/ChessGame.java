@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 
 /**
@@ -87,7 +88,7 @@ public class ChessGame {
         for (int x = 1; x<8; x++) {
             for (int y = 1; y<8; y++) {
                 ChessPosition pos = new ChessPosition(x,y);
-                if (board.getPiece(pos) == ChessPiece.PieceType.KING && board.getPiece(pos).getTeamColor()==teamColor) {
+                if (board.getPiece(pos).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(pos).getTeamColor()==teamColor) {
                     if (validMoves(pos) == null) {
                         return true;
                     }
@@ -105,7 +106,20 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+        for (int x = 1; x<8; x++) {
+            for (int y = 1; y < 8; y++) {
+                ChessPosition pos = new ChessPosition(x,y);
+                if (board.getPiece(pos).getPieceType() != null && board.getPiece(pos).getTeamColor() == teamColor) {
+                    if (validMoves(pos) != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -114,7 +128,7 @@ public class ChessGame {
      * @param board1 the new board to use
      */
     public void setBoard(ChessBoard board1) {
-        ChessBoard board = board1;
+        ChessBoard.setBoard(board1);
     }
 
     /**
@@ -124,5 +138,27 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board) && turn == chessGame.turn;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, turn);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "board=" + board +
+                ", turn=" + turn +
+                '}';
     }
 }
