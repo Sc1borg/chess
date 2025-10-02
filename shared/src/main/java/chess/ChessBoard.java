@@ -73,15 +73,28 @@ public class ChessBoard {
         board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
     }
 
-    public static ChessBoard copy() {
+    public ChessBoard copy() {
         ChessBoard newBoard = new ChessBoard();
         for (x = 1; x <=8; x++) {
             for (y = 1; y<=8; y++) {
                 ChessPosition pos = new ChessPosition(x,y);
-                newBoard.addPiece(pos, board.get(pos));
+                newBoard.addPiece(pos, board.getPiece(pos));
             }
         }
         return newBoard;
+    }
+    //Makes a move on the board
+    public void makeMove(ChessMove move) {
+        start = move.getStartPosition();
+        end = move.getEndPosition();
+        promo = move.getPromotionPiece();
+        ChessPiece piece = (promo == null) ? board.getPiece(start) : promo;
+        board.addPiece(end, piece);
+        board.removePiece(start);
+    }
+    //deletes the piece at a specific position
+    public void removePiece(ChessPosition pos) {
+        board[pos.getRow()-1][pos.getColumn()-1] = null;
     }
 
     public ChessPiece[][] getBoard() {return board;}
