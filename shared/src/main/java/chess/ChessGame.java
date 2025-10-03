@@ -58,10 +58,11 @@ public class ChessGame {
         }
         for (var move : moves) {
             ChessBoard tempBoard = board.copy();
-            tempBoard.makeMove(move, turn);
+            board.makeMove(move, turn);
             if (!isInCheck(turn)) {
                 validMoves.add(move);
             }
+            board = tempBoard.copy();
         }
         return validMoves;
     }
@@ -74,9 +75,12 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition start = move.getStartPosition();
+        if (board.getPiece(start) == null || board.getPiece(start).getTeamColor() != turn) {throw new InvalidMoveException("That move isn't valid");}
         var moves = validMoves(start);
+        if (moves == null) {throw new InvalidMoveException("That move isn't valid");}
         if (moves.contains(move)) {
             board.makeMove(move, turn);
+            turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         }
         else {throw new InvalidMoveException("That move isn't valid");}
     }
