@@ -50,7 +50,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition start) {
-        turn = getTeamTurn();
+        var piece = board.getPiece(start);
+        turn = piece.getTeamColor();
         Collection<ChessMove> moves = ChessPiece.pieceMoves(board, start);
         Collection<ChessMove> validMoves = new ArrayList<>();
         if (moves == null) {
@@ -58,11 +59,10 @@ public class ChessGame {
         }
         for (var move : moves) {
             ChessBoard tempBoard = board.copy();
-            board.makeMove(move, turn);
-            if (!isInCheck(turn)) {
+            tempBoard.makeMove(move, turn);
+            if (!isInCheck(turn, tempBoard)) {
                 validMoves.add(move);
             }
-            board = tempBoard.copy();
         }
         return validMoves;
     }
@@ -85,22 +85,16 @@ public class ChessGame {
         else {throw new InvalidMoveException("That move isn't valid");}
     }
 
-    /**
-     * Determines if the given team is in check
-     *
-     * @param teamColor which team to check for check
-     * @return True if the specified team is in check
-     */
-    public boolean isInCheck(TeamColor teamColor) {
+    public boolean isInCheck(TeamColor teamColor, ChessBoard grid) {
         //loop through to find the King
         for (int x = 1; x<9; x++) {
             for (int y = 1; y<9; y++) {
                 ChessPosition pos = new ChessPosition(x,y);
-                var piecePos = board.getPiece(pos);
+                var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
                     if (piecePos.getPieceType() == ChessPiece.PieceType.KING && piecePos.getTeamColor()==teamColor) {
                         //Once King is found, check that nothing can hit him
-                        return kingCheck(pos, teamColor);
+                        return kingCheck(pos, teamColor, grid);
                     }
                 }
             }
@@ -108,7 +102,16 @@ public class ChessGame {
         //I wasn't sure what to do if there is no King, so this is it for now.
         return false;
     }
-    private boolean kingCheck(ChessPosition start, TeamColor team) {
+    /**
+     * Determines if the given team is in check
+     *
+     * @param teamColor which team to check for check
+     * @return True if the specified team is in check
+     */
+    public boolean isInCheck(TeamColor teamColor) {
+        return isInCheck(teamColor, board);
+    }
+    private boolean kingCheck(ChessPosition start, TeamColor team, ChessBoard grid) {
         int[][] straight = {
             {1,0},
             {0,1},
@@ -149,11 +152,12 @@ public class ChessGame {
                     break;
                 }
                 ChessPosition pos = new ChessPosition(row, col);
-                var piecePos = board.getPiece(pos);
+                var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
                     if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.ROOK)) {
                         return true;
                     }
+                    break;
                 }
             }
         }
@@ -173,11 +177,12 @@ public class ChessGame {
                     break;
                 }
                 ChessPosition pos = new ChessPosition(row, col);
-                var piecePos = board.getPiece(pos);
+                var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
                     if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.BISHOP)) {
                         return true;
                     }
+                    break;
                 }
             }
         }
@@ -196,7 +201,7 @@ public class ChessGame {
                 break;
             }
             ChessPosition pos = new ChessPosition(row, col);
-            var piecePos = board.getPiece(pos);
+            var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
                 if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KNIGHT) {
                     return true;
@@ -218,7 +223,7 @@ public class ChessGame {
                 break;
             }
             ChessPosition pos = new ChessPosition(row, col);
-            var piecePos = board.getPiece(pos);
+            var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
                 if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING) {
                     return true;
@@ -239,7 +244,7 @@ public class ChessGame {
                 break;
             }
             ChessPosition pos = new ChessPosition(row, col);
-            var piecePos = board.getPiece(pos);
+            var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
                 if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING) {
                     return true;
@@ -251,14 +256,14 @@ public class ChessGame {
         col = start.getColumn();
         int deltaRow;
         if (team == TeamColor.BLACK) {
-            deltaRow = 1;
+            deltaRow = -1;
         }
-        else {deltaRow =-1;}
+        else {deltaRow =1;}
         row += deltaRow;
         col -= 1;
         if (row > 0 && row < 9 && col > 0 && col < 9) {
             ChessPosition pos = new ChessPosition(row, col);
-            var piecePos = board.getPiece(pos);
+            var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
                 if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.PAWN) {
                     return true;
@@ -268,7 +273,7 @@ public class ChessGame {
         col +=2;
         if (row  > 0 && row < 9 && col > 0 && col < 9) {
             ChessPosition pos = new ChessPosition(row, col);
-            var piecePos = board.getPiece(pos);
+            var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
                 return piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.PAWN;
             }
