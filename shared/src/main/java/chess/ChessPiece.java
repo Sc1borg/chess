@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * Represents a single chess piece
@@ -136,7 +135,7 @@ public class ChessPiece {
                     }
                     else {continue;}
                 }
-                if (col != start.getColumn() && piecePos.getTeamColor() != piece.getTeamColor()) {
+                if (col != start.getColumn() && piecePos != null && piecePos.getTeamColor() != piece.getTeamColor()) {
                     if (row == 8 || row == 1) {
                         for (var promo : PieceType.values()) {
                             if (promo == PieceType.PAWN || promo == PieceType.KING) {continue;}
