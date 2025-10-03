@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    static final private ChessPiece[][] board = new ChessPiece [8][8];
+    final private ChessPiece[][] board = new ChessPiece [8][8];
     public ChessBoard() {
         
     }
@@ -19,7 +19,7 @@ public class ChessBoard {
     /**
      * Adds a chess piece to the chessboard
      *
-     * @param pos where to add the piece to
+     * @param position where to add the piece to
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition pos, ChessPiece piece) {
@@ -29,7 +29,7 @@ public class ChessBoard {
     /**
      * Gets a chess piece on the chessboard
      *
-     * @param pos The position to get the piece from
+     * @param position The position to get the piece from
      * @return Either the piece at the position, or null if no piece is at that
      * position
      */
@@ -73,13 +73,31 @@ public class ChessBoard {
         board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
     }
 
-    public static void setBoard(ChessBoard board1) {
-        for (int y = 0; y<8; y++) {
-            for (int x = 0; x<8; x++) {
-                board[x][y] = board1[x][y];
+    public ChessBoard copy() {
+        ChessBoard newBoard = new ChessBoard();
+        for (x = 1; x <=8; x++) {
+            for (y = 1; y<=8; y++) {
+                ChessPosition pos = new ChessPosition(x,y);
+                newBoard.addPiece(pos, board.getPiece(pos));
             }
         }
+        return newBoard;
     }
+    //Makes a move on the board
+    public void makeMove(ChessMove move) {
+        start = move.getStartPosition();
+        end = move.getEndPosition();
+        promo = move.getPromotionPiece();
+        ChessPiece piece = (promo == null) ? board.getPiece(start) : promo;
+        board.addPiece(end, piece);
+        board.removePiece(start);
+    }
+    //deletes the piece at a specific position
+    public void removePiece(ChessPosition pos) {
+        board[pos.getRow()-1][pos.getColumn()-1] = null;
+    }
+
+    public ChessPiece[][] getBoard() {return board;}
 
     @Override
     public boolean equals(Object o) {
