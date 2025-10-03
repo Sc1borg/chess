@@ -19,7 +19,7 @@ public class ChessBoard {
     /**
      * Adds a chess piece to the chessboard
      *
-     * @param position where to add the piece to
+     * @param pos where to add the piece to
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition pos, ChessPiece piece) {
@@ -29,7 +29,7 @@ public class ChessBoard {
     /**
      * Gets a chess piece on the chessboard
      *
-     * @param position The position to get the piece from
+     * @param pos The position to get the piece from
      * @return Either the piece at the position, or null if no piece is at that
      * position
      */
@@ -75,22 +75,22 @@ public class ChessBoard {
 
     public ChessBoard copy() {
         ChessBoard newBoard = new ChessBoard();
-        for (x = 1; x <=8; x++) {
-            for (y = 1; y<=8; y++) {
+        for (int x = 1; x <=8; x++) {
+            for (int y = 1; y<=8; y++) {
                 ChessPosition pos = new ChessPosition(x,y);
-                newBoard.addPiece(pos, board.getPiece(pos));
+                newBoard.addPiece(pos, getPiece(pos));
             }
         }
         return newBoard;
     }
     //Makes a move on the board
-    public void makeMove(ChessMove move) {
-        start = move.getStartPosition();
-        end = move.getEndPosition();
-        promo = move.getPromotionPiece();
-        ChessPiece piece = (promo == null) ? board.getPiece(start) : promo;
-        board.addPiece(end, piece);
-        board.removePiece(start);
+    public void makeMove(ChessMove move, ChessGame.TeamColor team) {
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        ChessPiece.PieceType promo = move.getPromotionPiece();
+        ChessPiece piece = (promo == null) ? getPiece(start) : new ChessPiece(team, promo);
+        addPiece(end, piece);
+        removePiece(start);
     }
     //deletes the piece at a specific position
     public void removePiece(ChessPosition pos) {
