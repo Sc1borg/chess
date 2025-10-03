@@ -247,6 +247,6 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        return "ChessPiece";
+        return "ChessPiece: " + getPieceType().toString() + " Color: " + getTeamColor().toString();
     }
 }
