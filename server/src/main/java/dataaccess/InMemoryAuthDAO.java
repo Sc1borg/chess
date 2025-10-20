@@ -1,11 +1,9 @@
 package dataaccess;
 
-import model.AuthData;
-
 import java.util.HashMap;
 
 public class InMemoryAuthDAO implements AuthDAO {
-    private final HashMap<String, AuthData> authDataMap = new HashMap<String, AuthData>();
+    private final HashMap<String, String> authDataMap = new HashMap<>();
 
     @Override
     public void clear() {
@@ -16,4 +14,16 @@ public class InMemoryAuthDAO implements AuthDAO {
     public boolean getAuth(String authToken) {
         return authDataMap.containsKey(authToken);
     }
+
+    @Override
+    public void saveAuth(String authToken, String username) {
+        authDataMap.put(authToken, username);
+    }
+
+    @Override
+    public void removeAuth(String authToken) {
+        authDataMap.remove(authToken);
+    }
+
+
 }
