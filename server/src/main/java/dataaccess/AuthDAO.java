@@ -1,5 +1,6 @@
 package dataaccess;
 
-public interface UserDAO {
+public interface AuthDAO {
     void clear();
+
 }
