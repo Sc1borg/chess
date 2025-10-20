@@ -11,4 +11,9 @@ public class InMemoryAuthDAO implements AuthDAO {
     public void clear() {
         authDataMap.clear();
     }
+
+    @Override
+    public boolean getAuth(String authToken) {
+        return authDataMap.containsKey(authToken);
+    }
 }
