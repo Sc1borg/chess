@@ -3,11 +3,14 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.Javalin;
+import model.GameData;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
 import service.GameService;
 import service.UserService;
+
+import java.util.ArrayList;
 
 public class Server {
 
@@ -59,6 +62,16 @@ public class Server {
                 ctx.status(200);
             } catch (DataAccessException e) {
                 ctx.status(501).json(e);
+            }
+        });
+
+        javalin.get("/game", ctx -> {
+            try {
+                String auth = ctx.header("authorization");
+                ArrayList<GameData> games = gameService.getGames(auth);
+                ctx.status(200).json(games);
+            } catch (DataAccessException e) {
+                ctx.status(401).json(e);
             }
         });
 
