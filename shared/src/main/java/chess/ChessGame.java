@@ -235,7 +235,7 @@ public class ChessGame {
                 row += deltaRow;
                 col += deltaCol;
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
-                    break;
+                    continue;
                 }
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
