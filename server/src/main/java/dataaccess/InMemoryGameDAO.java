@@ -28,4 +28,18 @@ public class InMemoryGameDAO implements GameDAO {
     }
 
 
+    public boolean joinGame(int gameID, String playerColor, String username) {
+        GameData gameData = gameDataMap.get(gameID);
+        GameData newGameData;
+
+        if (playerColor.equals("BLACK") && gameData.blackUsername().isEmpty()) {
+            newGameData = new GameData(gameID, gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
+        } else if (playerColor.equals("WHITE") && gameData.whiteUsername().isEmpty()) {
+            newGameData = new GameData(gameID, username, gameData.blackUsername(), gameData.gameName(), gameData.game());
+        } else {
+            return false;
+        }
+        gameDataMap.put(gameID, newGameData);
+        return true;
+    }
 }

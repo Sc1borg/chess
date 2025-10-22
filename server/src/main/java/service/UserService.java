@@ -42,13 +42,13 @@ public class UserService {
         invalidateToken(authToken);
     }
 
-    public String generateAuthToken(String username) {
+    private String generateAuthToken(String username) {
         String authToken = UUID.randomUUID().toString();
         authDAO.saveAuth(authToken, username);
         return authToken;
     }
 
-    public void invalidateToken(String auth) throws DataAccessException {
+    private void invalidateToken(String auth) throws DataAccessException {
         if (authDAO.getAuth(auth)) {
             authDAO.removeAuth(auth);
             return;
@@ -58,5 +58,9 @@ public class UserService {
 
     public boolean getAuth(String authToken) {
         return authDAO.getAuth(authToken);
+    }
+
+    public String getUsername(String authToken) {
+        return authDAO.getUsername(authToken);
     }
 }

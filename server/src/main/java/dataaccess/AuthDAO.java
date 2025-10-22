@@ -9,4 +9,6 @@ public interface AuthDAO {
 
     void removeAuth(String authToken);
 
+    String getUsername(String authToken);
+
 }

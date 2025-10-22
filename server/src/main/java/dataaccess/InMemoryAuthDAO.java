@@ -26,4 +26,7 @@ public class InMemoryAuthDAO implements AuthDAO {
     }
 
 
+    public String getUsername(String authToken) {
+        return authDataMap.get(authToken);
+    }
 }

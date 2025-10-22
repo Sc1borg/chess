@@ -84,6 +84,17 @@ public class Server {
             }
         });
 
+        javalin.put("/game", ctx -> {
+            try {
+                String auth = ctx.header("authorization");
+                JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
+
+                gameService.joinGame(joinGameRequest, auth);
+            } catch (DataAccessException e) {
+                ctx.status(400).json(e);
+            }
+        });
+
     }
 
     public int run(int desiredPort) {

@@ -10,4 +10,8 @@ public interface GameDAO {
     ArrayList<GameData> getGames();
 
     void createGame(GameData gameData);
+
+    boolean getGame(int gameID);
+
+    boolean joinGame(int gameID, String playerColor, String username);
 }
