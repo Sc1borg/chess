@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import io.javalin.Javalin;
 import model.LoginRequest;
 import model.LoginResult;
@@ -29,17 +30,13 @@ public class Server {
 
 
         javalin.post("/user", ctx -> {
-            RegisterRequest registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
-            if (userService.getUsername(registerRequest.username())) {
-                ctx.status(403).result("Error: username already taken");
+            try {
+                RegisterRequest registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
+                LoginResult loginResult = userService.register(registerRequest);
+                ctx.status(200).json(loginResult);
+            } catch (DataAccessException e) {
+                ctx.status(403);
             }
-            userService.createUser(registerRequest);
-
-            String authToken = authService.generateAuthToken();
-            authService.saveAuth(authToken, registerRequest.username());
-            LoginResult response = new LoginResult(registerRequest.username(), authToken);
-
-            ctx.status(200).json(response);
         });
 
 
