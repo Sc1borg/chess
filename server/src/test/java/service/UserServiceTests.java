@@ -2,19 +2,16 @@ package service;
 
 
 import dataaccess.DataAccessException;
-import dataaccess.InMemoryUserDAO;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTests {
 
     private final UserService userService = new UserService();
-    private InMemoryUserDAO userDAO;
 
     @Test
     void registerUser_success() throws DataAccessException {
@@ -28,11 +25,9 @@ class UserServiceTests {
     @Test
     void registerUser_failure() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
+        LoginResult _ = userService.register(registerRequest);
 
-        assertThrows(DataAccessException.class, () -> {
-            userService.register(registerRequest);
-        });
+        assertThrows(DataAccessException.class, () -> userService.register(registerRequest));
 
     }
 
@@ -49,11 +44,28 @@ class UserServiceTests {
     }
 
     @Test
-    void loginUser_failure() throws DataAccessException {
+    void loginUser_failure() {
         LoginRequest loginRequest = new LoginRequest("username", "password");
 
-        assertThrows(DataAccessException.class, () -> {
-            userService.login(loginRequest);
-        });
+        assertThrows(DataAccessException.class, () -> userService.login(loginRequest));
+    }
+
+    @Test
+    void logoutUser_success() throws DataAccessException {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        LoginResult loginResult = userService.register(registerRequest);
+
+        assertNotNull(loginResult.authToken());
+
+        userService.logout(loginResult.authToken());
+        assertFalse(userService.getAuth(loginResult.authToken()));
+    }
+
+    @Test
+    void logoutUser_failure() throws DataAccessException {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        LoginResult _ = userService.register(registerRequest);
+
+        assertThrows(DataAccessException.class, () -> userService.logout("Invalid Auth"));
     }
 }

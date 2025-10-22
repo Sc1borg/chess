@@ -6,14 +6,12 @@ import io.javalin.Javalin;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
-import service.AuthService;
 import service.GameService;
 import service.UserService;
 
 public class Server {
 
     private final Javalin javalin;
-    private final AuthService authService = new AuthService();
     private final GameService gameService = new GameService();
     private final UserService userService = new UserService();
 
@@ -24,7 +22,6 @@ public class Server {
         javalin.delete("/db", ctx -> {
             userService.clear();
             gameService.clear();
-            authService.clear();
             ctx.status(200);
         });
 
@@ -56,13 +53,12 @@ public class Server {
 
 
         javalin.delete("/session", ctx -> {
-            String auth = ctx.header("authorization");
-
-            boolean success = authService.invalidateToken(auth);
-            if (success) {
+            try {
+                String auth = ctx.header("authorization");
+                userService.logout(auth);
                 ctx.status(200);
-            } else {
-                ctx.status(501).result("Error: Description of error");
+            } catch (DataAccessException e) {
+                ctx.status(501).json(e);
             }
         });
 
