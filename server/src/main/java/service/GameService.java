@@ -53,7 +53,7 @@ public class GameService {
         }
         //Check that the game exists
         if (!gameDAO.getGame(joinGameRequest.gameID())) {
-            throw new DataAccessException("Error: bad request: ");
+            throw new DataAccessException("Error: bad request");
         }
         //Get the username and try joining game
         String username = userService.getUsername(authToken);

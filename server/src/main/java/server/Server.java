@@ -47,28 +47,23 @@ public class Server {
                 LoginResult loginResult = userService.login(loginRequest);
                 ctx.status(200).json(loginResult);
             } catch (DataAccessException e) {
-                ctx.status(403).json(e);
+                if (e.getMessage().equals("Error: unauthorized")) {
+                    ctx.status(401).json(e);
+                }
             }
         });
 
-
-        javalin.delete("/session", ctx -> {
-            try {
-                String auth = ctx.header("authorization");
-                userService.logout(auth);
-                ctx.status(200);
-            } catch (DataAccessException e) {
-                ctx.status(501).json(e);
-            }
-        });
 
         javalin.get("/game", ctx -> {
             try {
                 String auth = ctx.header("authorization");
                 ArrayList<GameData> games = gameService.getGames(auth);
                 ctx.status(200).json(games);
+
             } catch (DataAccessException e) {
-                ctx.status(401).json(e);
+                if (e.getMessage().equals("Error: unauthorized")) {
+                    ctx.status(401).json(e);
+                }
             }
         });
 
@@ -80,7 +75,9 @@ public class Server {
                 int gameId = gameService.createGame(createGameRequest, auth);
                 ctx.status(200).json(gameId);
             } catch (DataAccessException e) {
-                ctx.status(401).json(e);
+                if (e.getMessage().equals("Error: unauthorized")) {
+                    ctx.status(401).json(e);
+                }
             }
         });
 
@@ -91,7 +88,15 @@ public class Server {
 
                 gameService.joinGame(joinGameRequest, auth);
             } catch (DataAccessException e) {
-                ctx.status(400).json(e);
+                if (e.getMessage().equals("Error: unauthorized")) {
+                    ctx.status(401).json(e);
+                }
+                if (e.getMessage().equals("Error: already taken")) {
+                    ctx.status(401).json(e);
+                }
+                if (e.getMessage().equals("Error: bad request")) {
+                    ctx.status(401).json(e);
+                }
             }
         });
 
