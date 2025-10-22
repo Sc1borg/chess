@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Server {
 
     private final Javalin javalin;
+    private final Gson gson = new Gson();
     private final GameService gameService = new GameService();
     private final UserService userService = new UserService();
 
@@ -28,7 +29,7 @@ public class Server {
 
         javalin.post("/user", ctx -> {
             try {
-                RegisterRequest registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
+                RegisterRequest registerRequest = gson.fromJson(ctx.body(), RegisterRequest.class);
                 LoginResult loginResult = userService.register(registerRequest);
                 ctx.status(200).json(loginResult);
             } catch (DataAccessException e) {
@@ -43,7 +44,7 @@ public class Server {
 
         javalin.post("/session", ctx -> {
             try {
-                LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
+                LoginRequest loginRequest = gson.fromJson(ctx.body(), LoginRequest.class);
                 LoginResult loginResult = userService.login(loginRequest);
                 ctx.status(200).json(loginResult);
             } catch (DataAccessException e) {
@@ -70,7 +71,7 @@ public class Server {
         javalin.post("/game", ctx -> {
             try {
                 String auth = ctx.header("authorization");
-                CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
+                CreateGameRequest createGameRequest = gson.fromJson(ctx.body(), CreateGameRequest.class);
 
                 int gameId = gameService.createGame(createGameRequest, auth);
                 ctx.status(200).json(gameId);
@@ -84,7 +85,7 @@ public class Server {
         javalin.put("/game", ctx -> {
             try {
                 String auth = ctx.header("authorization");
-                JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
+                JoinGameRequest joinGameRequest = gson.fromJson(ctx.body(), JoinGameRequest.class);
 
                 gameService.joinGame(joinGameRequest, auth);
             } catch (DataAccessException e) {
