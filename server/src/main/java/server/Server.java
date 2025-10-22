@@ -35,21 +35,23 @@ public class Server {
                 LoginResult loginResult = userService.register(registerRequest);
                 ctx.status(200).json(loginResult);
             } catch (DataAccessException e) {
-                ctx.status(403);
+                if (e.getMessage().equals("Error: already taken")) {
+                    ctx.status(403).json(e);
+                } else {
+                    ctx.status(500);
+                }
             }
         });
 
 
         javalin.post("/session", ctx -> {
-            LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
-            if (!userService.getUsername(loginRequest.username())) {
-                ctx.status(401).result("message: Error no user found");
+            try {
+                LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
+                LoginResult loginResult = userService.login(loginRequest);
+                ctx.status(200).json(loginResult);
+            } catch (DataAccessException e) {
+                ctx.status(403).json(e);
             }
-            String authToken = authService.generateAuthToken();
-            authService.saveAuth(authToken, loginRequest.username());
-            LoginResult response = new LoginResult(loginRequest.username(), authToken);
-
-            ctx.status(200).json(response);
         });
 
 

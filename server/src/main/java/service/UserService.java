@@ -2,12 +2,13 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.InMemoryUserDAO;
+import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
 
 public class UserService {
-    InMemoryUserDAO userDAO = new InMemoryUserDAO();
-    AuthService authService;
+    final InMemoryUserDAO userDAO = new InMemoryUserDAO();
+    final AuthService authService = new AuthService();
 
 
     public void clear() {
@@ -20,12 +21,21 @@ public class UserService {
 
     public LoginResult register(RegisterRequest registerRequest) throws DataAccessException {
         if (userDAO.getUsername(registerRequest.username())) {
-            throw new DataAccessException("Error: Username already taken");
+            throw new DataAccessException("Error: already taken");
         }
-        authService = new AuthService();
         userDAO.createUser(registerRequest);
         String authToken = authService.generateAuthToken();
         authService.saveAuth(authToken, registerRequest.username());
         return new LoginResult(registerRequest.username(), authToken);
+    }
+
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+        if (!userDAO.getUsername(loginRequest.username())) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        String authToken = authService.generateAuthToken();
+        authService.saveAuth(authToken, loginRequest.username());
+        return new LoginResult(loginRequest.username(), authToken);
     }
 }

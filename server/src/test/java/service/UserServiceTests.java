@@ -3,6 +3,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.InMemoryUserDAO;
+import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserServiceTests {
 
-    private UserService userService;
+    private final UserService userService = new UserService();
     private InMemoryUserDAO userDAO;
 
     @Test
     void registerUser_success() throws DataAccessException {
-        userService = new UserService();
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -27,7 +27,6 @@ class UserServiceTests {
 
     @Test
     void registerUser_failure() throws DataAccessException {
-        userService = new UserService();
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -35,5 +34,26 @@ class UserServiceTests {
             userService.register(registerRequest);
         });
 
+    }
+
+    @Test
+    void loginUser_success() throws DataAccessException {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
+        LoginResult regResult = userService.register(registerRequest);
+
+        LoginRequest loginRequest = new LoginRequest("username", "password");
+        LoginResult loginResult = userService.login(loginRequest);
+
+        assert loginResult.username().equals(loginRequest.username());
+        assertNotNull(loginResult.authToken());
+    }
+
+    @Test
+    void loginUser_failure() throws DataAccessException {
+        LoginRequest loginRequest = new LoginRequest("username", "password");
+
+        assertThrows(DataAccessException.class, () -> {
+            userService.login(loginRequest);
+        });
     }
 }
