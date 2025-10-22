@@ -34,7 +34,7 @@ class UserServiceTests {
     @Test
     void loginUser_success() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult regResult = userService.register(registerRequest);
+        LoginResult _ = userService.register(registerRequest);
 
         LoginRequest loginRequest = new LoginRequest("username", "password");
         LoginResult loginResult = userService.login(loginRequest);
