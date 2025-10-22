@@ -3,10 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.Javalin;
-import model.GameData;
-import model.LoginRequest;
-import model.LoginResult;
-import model.RegisterRequest;
+import model.*;
 import service.GameService;
 import service.UserService;
 
@@ -75,6 +72,17 @@ public class Server {
             }
         });
 
+        javalin.post("/game", ctx -> {
+            try {
+                String auth = ctx.header("authorization");
+                CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
+
+                int gameId = gameService.createGame(createGameRequest, auth);
+                ctx.status(200).json(gameId);
+            } catch (DataAccessException e) {
+                ctx.status(401).json(e);
+            }
+        });
 
     }
 

@@ -7,5 +7,7 @@ import java.util.ArrayList;
 public interface GameDAO {
     void clear();
 
-    ArrayList<GameData> getGames(String authToken);
+    ArrayList<GameData> getGames();
+
+    void createGame(GameData gameData);
 }

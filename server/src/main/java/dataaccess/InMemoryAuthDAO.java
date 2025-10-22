@@ -3,7 +3,7 @@ package dataaccess;
 import java.util.HashMap;
 
 public class InMemoryAuthDAO implements AuthDAO {
-    private final HashMap<String, String> authDataMap = new HashMap<>();
+    private final static HashMap<String, String> authDataMap = new HashMap<>();
 
     @Override
     public void clear() {

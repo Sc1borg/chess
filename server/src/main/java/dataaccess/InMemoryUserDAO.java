@@ -5,7 +5,7 @@ import model.RegisterRequest;
 import java.util.HashMap;
 
 public class InMemoryUserDAO implements UserDAO {
-    private final HashMap<String, RegisterRequest> userMap = new HashMap<>();
+    private final static HashMap<String, RegisterRequest> userMap = new HashMap<>();
 
     @Override
     public void clear() {
