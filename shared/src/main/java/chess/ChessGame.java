@@ -15,6 +15,7 @@ public class ChessGame {
     ChessBoard board = new ChessBoard();
 
     TeamColor turn;
+
     public ChessGame() {
         turn = TeamColor.WHITE;
         board.resetBoard();
@@ -33,7 +34,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        turn=team;
+        turn = team;
     }
 
     /**
@@ -53,7 +54,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition start) {
         var piece = board.getPiece(start);
-        if (piece == null) {return null;}
+        if (piece == null) {
+            return null;
+        }
         turn = piece.getTeamColor();
         Collection<ChessMove> moves = ChessPiece.pieceMoves(board, start);
         Collection<ChessMove> validMoves = new ArrayList<>();
@@ -78,24 +81,29 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition start = move.getStartPosition();
-        if (board.getPiece(start) == null || board.getPiece(start).getTeamColor() != turn) {throw new InvalidMoveException("That move isn't valid");}
+        if (board.getPiece(start) == null || board.getPiece(start).getTeamColor() != turn) {
+            throw new InvalidMoveException("That move isn't valid");
+        }
         var moves = validMoves(start);
-        if (moves == null) {throw new InvalidMoveException("That move isn't valid");}
+        if (moves == null) {
+            throw new InvalidMoveException("That move isn't valid");
+        }
         if (moves.contains(move)) {
             board.makeMove(move, turn);
             turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        } else {
+            throw new InvalidMoveException("That move isn't valid");
         }
-        else {throw new InvalidMoveException("That move isn't valid");}
     }
 
     public boolean isInCheck(TeamColor teamColor, ChessBoard grid) {
         //loop through to find the King
-        for (int x = 1; x<9; x++) {
-            for (int y = 1; y<9; y++) {
-                ChessPosition pos = new ChessPosition(x,y);
+        for (int x = 1; x < 9; x++) {
+            for (int y = 1; y < 9; y++) {
+                ChessPosition pos = new ChessPosition(x, y);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getPieceType() == ChessPiece.PieceType.KING && piecePos.getTeamColor()==teamColor) {
+                    if (piecePos.getPieceType() == ChessPiece.PieceType.KING && piecePos.getTeamColor() == teamColor) {
                         //Once King is found, check that nothing can hit him
                         return kingCheck(pos, teamColor, grid);
                     }
@@ -105,6 +113,7 @@ public class ChessGame {
         //I wasn't sure what to do if there is no King, so this is it for now.
         return false;
     }
+
     /**
      * Determines if the given team is in check
      *
@@ -114,28 +123,29 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         return isInCheck(teamColor, board);
     }
+
     private boolean kingCheck(ChessPosition start, TeamColor team, ChessBoard grid) {
         int[][] straight = {
-            {1,0},
-            {0,1},
-            {-1,0},
-            {0,-1}
+                {1, 0},
+                {0, 1},
+                {-1, 0},
+                {0, -1}
         };
         int[][] diagonal = {
-            {1,1},
-            {1,-1},
-            {-1,1},
-            {-1, -1}
+                {1, 1},
+                {1, -1},
+                {-1, 1},
+                {-1, -1}
         };
         int[][] knightMoves = {
-            {2, 1},
-            {2, -1},
-            {-2, 1},
-            {-2, -1},
-            {1, 2},
-            {1, -2},
-            {-1, 2},
-            {-1, -2}
+                {2, 1},
+                {2, -1},
+                {-2, 1},
+                {-2, -1},
+                {1, 2},
+                {1, -2},
+                {-1, 2},
+                {-1, -2}
         };
         int row;
         int col;
@@ -176,7 +186,7 @@ public class ChessGame {
             while (true) {
                 row += deltaRow;
                 col += deltaCol;
-                if (row <1 || row > 8 || col < 1 || col > 8) {
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;
                 }
                 ChessPosition pos = new ChessPosition(row, col);
@@ -197,10 +207,10 @@ public class ChessGame {
 
             row = start.getRow();
             col = start.getColumn();
-            
+
             row += deltaRow;
             col += deltaCol;
-            if (row <1 || row > 8 || col < 1 || col > 8) {
+            if (row < 1 || row > 8 || col < 1 || col > 8) {
                 continue;
             }
             ChessPosition pos = new ChessPosition(row, col);
@@ -212,45 +222,27 @@ public class ChessGame {
             }
         }
 
-        //King Handling Straight
-        for (int[] dir : straight) {
-            int deltaRow = dir[0];
-            int deltaCol = dir[1];
-    
-            row = start.getRow();
-            col = start.getColumn();
-            
-            row += deltaRow;
-            col += deltaCol;
-            if (row <1 || row > 8 || col < 1 || col > 8) {
-                break;
-            }
-            ChessPosition pos = new ChessPosition(row, col);
-            var piecePos = grid.getPiece(pos);
-            if (piecePos != null) {
-                if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING) {
-                    return true;
+        //King Handling Straight and diagonal handling
+        int[][][] directions = {straight, diagonal};
+        for (int[][] dirSet : directions) {
+            for (int[] dir : dirSet) {
+                int deltaRow = dir[0];
+                int deltaCol = dir[1];
+
+                row = start.getRow();
+                col = start.getColumn();
+
+                row += deltaRow;
+                col += deltaCol;
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
+                    break;
                 }
-            }
-        }
-        //King Handling diagonal
-        for (int[] dir : diagonal) {
-            int deltaRow = dir[0];
-            int deltaCol = dir[1];
-    
-            row = start.getRow();
-            col = start.getColumn();
-            
-            row += deltaRow;
-            col += deltaCol;
-            if (row <1 || row > 8 || col < 1 || col > 8) {
-                break;
-            }
-            ChessPosition pos = new ChessPosition(row, col);
-            var piecePos = grid.getPiece(pos);
-            if (piecePos != null) {
-                if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING) {
-                    return true;
+                ChessPosition pos = new ChessPosition(row, col);
+                var piecePos = grid.getPiece(pos);
+                if (piecePos != null) {
+                    if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING) {
+                        return true;
+                    }
                 }
             }
         }
@@ -260,8 +252,9 @@ public class ChessGame {
         int deltaRow;
         if (team == TeamColor.BLACK) {
             deltaRow = -1;
+        } else {
+            deltaRow = 1;
         }
-        else {deltaRow =1;}
         row += deltaRow;
         col -= 1;
         if (row > 0 && row < 9 && col > 0 && col < 9) {
@@ -273,8 +266,8 @@ public class ChessGame {
                 }
             }
         }
-        col +=2;
-        if (row  > 0 && row < 9 && col > 0 && col < 9) {
+        col += 2;
+        if (row > 0 && row < 9 && col > 0 && col < 9) {
             ChessPosition pos = new ChessPosition(row, col);
             var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
@@ -294,12 +287,12 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         }
-        for (int x = 1; x<=8; x++) {
-            for (int y = 1; y<=8; y++) {
-                ChessPosition pos = new ChessPosition(x,y);
+        for (int x = 1; x <= 8; x++) {
+            for (int y = 1; y <= 8; y++) {
+                ChessPosition pos = new ChessPosition(x, y);
                 var piecePos = board.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor()==teamColor) {
+                    if (piecePos.getTeamColor() == teamColor) {
                         if (!validMoves(pos).isEmpty()) {
                             return false;
                         }
@@ -321,7 +314,9 @@ public class ChessGame {
         if (isInCheck(TeamColor.WHITE)) {
             return false;
         }
-        if (isInCheck(TeamColor.BLACK)) {return false;}
+        if (isInCheck(TeamColor.BLACK)) {
+            return false;
+        }
         for (int x = 1; x <= 8; x++) {
             for (int y = 1; y <= 8; y++) {
                 chess.ChessPosition pos = new ChessPosition(x, y);
