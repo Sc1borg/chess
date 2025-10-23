@@ -44,7 +44,7 @@ public class GameServiceTests {
         LoginResult loginResult = userService.register(registerRequest);
 
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int _ = gameService.createGame(createGameRequest, loginResult.authToken());
+        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
 
         ArrayList<GameData> games = gameService.getGames(loginResult.authToken());
         assertNotNull(games);
@@ -54,7 +54,7 @@ public class GameServiceTests {
     @Test
     void getGames_failure() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult _ = userService.register(registerRequest);
+        LoginResult loginResult = userService.register(registerRequest);
 
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
 
@@ -91,7 +91,7 @@ public class GameServiceTests {
         LoginResult loginResult = userService.register(registerRequest);
 
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int _ = gameService.createGame(createGameRequest, loginResult.authToken());
+        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
         JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", 1);
 
         assertThrows(DataAccessException.class, () -> gameService.joinGame(joinGameRequest, loginResult.authToken()));
