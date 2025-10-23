@@ -8,4 +8,6 @@ public interface UserDAO {
     boolean getUsername(String username);
 
     void createUser(RegisterRequest userData);
+
+    boolean matchPassword(String username, String password);
 }

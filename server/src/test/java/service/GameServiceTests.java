@@ -3,6 +3,7 @@ package service;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,6 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class GameServiceTests {
     GameService gameService = new GameService();
     UserService userService = new UserService();
+
+    @BeforeEach
+    void clear() {
+        gameService.clear();
+        userService.clear();
+    }
 
     @Test
     void createGame_success() throws DataAccessException {
@@ -41,6 +48,7 @@ public class GameServiceTests {
 
         ArrayList<GameData> games = gameService.getGames(loginResult.authToken());
         assertNotNull(games);
+        System.out.println(games);
     }
 
     @Test

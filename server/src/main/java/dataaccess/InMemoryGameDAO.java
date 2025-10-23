@@ -32,9 +32,9 @@ public class InMemoryGameDAO implements GameDAO {
         GameData gameData = gameDataMap.get(gameID);
         GameData newGameData;
 
-        if (playerColor.equals("BLACK") && gameData.blackUsername().isEmpty()) {
+        if (playerColor.equals("BLACK") && gameData.blackUsername() == null) {
             newGameData = new GameData(gameID, gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
-        } else if (playerColor.equals("WHITE") && gameData.whiteUsername().isEmpty()) {
+        } else if (playerColor.equals("WHITE") && gameData.whiteUsername() == null) {
             newGameData = new GameData(gameID, username, gameData.blackUsername(), gameData.gameName(), gameData.game());
         } else {
             return false;

@@ -8,6 +8,9 @@ import service.GameService;
 import service.UserService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
 
@@ -35,11 +38,19 @@ public class Server {
                 ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: already taken")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(403).json(myResult);
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+                    errorInfo.put("type", e.getClass().getSimpleName());
+                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                    String json = gson.toJson(errorInfo);
+                    ctx.status(403).result(json);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(400).json(myResult);
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+                    errorInfo.put("type", e.getClass().getSimpleName());
+                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                    String json = gson.toJson(errorInfo);
+                    ctx.status(400).json(json);
                 }
             }
         });
@@ -53,11 +64,19 @@ public class Server {
                 ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(401).json(myResult);
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+                    errorInfo.put("type", e.getClass().getSimpleName());
+                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                    String json = gson.toJson(errorInfo);
+                    ctx.status(401).json(json);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(400).json(myResult);
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+                    errorInfo.put("type", e.getClass().getSimpleName());
+                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                    String json = gson.toJson(errorInfo);
+                    ctx.status(400).json(json);
                 }
             }
         });
@@ -69,8 +88,12 @@ public class Server {
                 ctx.status(200);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(401).json(myResult);
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+                    errorInfo.put("type", e.getClass().getSimpleName());
+                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                    String json = gson.toJson(errorInfo);
+                    ctx.status(401).json(json);
                 }
             }
         });
@@ -80,13 +103,18 @@ public class Server {
             try {
                 String auth = ctx.header("authorization");
                 ArrayList<GameData> games = gameService.getGames(auth);
-                String myResult = gson.toJson(games);
-                ctx.status(200).json(myResult);
-
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("games", games);
+                String myResult = gson.toJson(responseMap);
+                ctx.status(200).result(myResult).contentType("application/json");
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(401).json(myResult);
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+                    errorInfo.put("type", e.getClass().getSimpleName());
+                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                    String json = gson.toJson(errorInfo);
+                    ctx.status(401).json(json);
                 }
             }
         });
@@ -96,13 +124,24 @@ public class Server {
                 String auth = ctx.header("authorization");
                 CreateGameRequest createGameRequest = gson.fromJson(ctx.body(), CreateGameRequest.class);
 
-                int gameId = gameService.createGame(createGameRequest, auth);
-                String myResult = gson.toJson(gameId);
-                ctx.status(200).json(myResult);
+                int gameID = gameService.createGame(createGameRequest, auth);
+                Map<String, Integer> response = new HashMap<>();
+                response.put("gameID", gameID);
+                String myResult = gson.toJson(response);
+                ctx.status(200).result(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = gson.toJson(e);
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+
+                    String myResult = gson.toJson(errorInfo);
                     ctx.status(401).json(myResult);
+                } else if (e.getMessage().equals("Error: bad request")) {
+                    Map<String, String> errorInfo = new HashMap<>();
+                    errorInfo.put("message", e.getMessage());
+
+                    String myResult = gson.toJson(errorInfo);
+                    ctx.status(400).json(myResult);
                 }
             }
         });
@@ -116,17 +155,31 @@ public class Server {
 
                 ctx.status(200);
             } catch (DataAccessException e) {
-                if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(401).json(myResult);
-                }
-                if (e.getMessage().equals("Error: already taken")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(401).json(myResult);
-                }
-                if (e.getMessage().equals("Error: bad request")) {
-                    String myResult = gson.toJson(e);
-                    ctx.status(401).json(myResult);
+                switch (e.getMessage()) {
+                    case "Error: unauthorized" -> {
+                        Map<String, String> errorInfo = new HashMap<>();
+                        errorInfo.put("message", e.getMessage());
+                        errorInfo.put("type", e.getClass().getSimpleName());
+                        errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                        String myResult = gson.toJson(errorInfo);
+                        ctx.status(401).json(myResult);
+                    }
+                    case "Error: already taken" -> {
+                        Map<String, String> errorInfo = new HashMap<>();
+                        errorInfo.put("message", e.getMessage());
+                        errorInfo.put("type", e.getClass().getSimpleName());
+                        errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                        String myResult = gson.toJson(errorInfo);
+                        ctx.status(403).json(myResult);
+                    }
+                    case "Error: bad request" -> {
+                        Map<String, String> errorInfo = new HashMap<>();
+                        errorInfo.put("message", e.getMessage());
+                        errorInfo.put("type", e.getClass().getSimpleName());
+                        errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
+                        String myResult = gson.toJson(errorInfo);
+                        ctx.status(400).json(myResult);
+                    }
                 }
             }
         });

@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTests {
 
     private final UserService userService = new UserService();
+
+    @BeforeEach
+    void clear() {
+        userService.clear();
+    }
 
     @Test
     void registerUser_success() throws DataAccessException {
