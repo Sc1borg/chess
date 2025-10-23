@@ -161,17 +161,16 @@ public class ChessGame {
             while (true) {
                 row += deltaRow;
                 col += deltaCol;
-                String jo = "mama";
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;
                 }
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team) {
-                        if (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
-                            return true;
-                        }
+                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
+                        return true;
+                    } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
+                        return true;
                     }
                     break;
                 }
@@ -189,21 +188,18 @@ public class ChessGame {
             while (true) {
                 row += deltaRow;
                 col += deltaCol;
-                //check the borders
-                String all = "clear";
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;
                 }
-                //set the new chess position
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team) {
-                        if (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.BISHOP) {
-                            return true;
-                        }
-                        break;
+                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
+                        return true;
+                    } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        return true;
                     }
+                    break;
                 }
             }
         }
@@ -215,15 +211,14 @@ public class ChessGame {
 
             row = start.getRow();
             col = start.getColumn();
-            String help = "test";
 
             row += deltaRow;
             col += deltaCol;
+            String testing = "test";
             if (row < 1 || row > 8 || col < 1 || col > 8) {
                 continue;
             }
             ChessPosition pos = new ChessPosition(row, col);
-            row++;
             var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
                 if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KNIGHT) {
@@ -242,11 +237,9 @@ public class ChessGame {
                 row = start.getRow();
                 col = start.getColumn();
 
-                int meme = 67;
-
                 row += deltaRow;
                 col += deltaCol;
-                meme++;
+                String test = "testing";
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     continue;
                 }
