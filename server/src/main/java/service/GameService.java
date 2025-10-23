@@ -1,8 +1,8 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
-import dataaccess.DatabaseRegistry;
+import dataAccess.DataAccessException;
+import dataAccess.DatabaseRegistry;
 import model.CreateGameRequest;
 import model.GameData;
 import model.JoinGameRequest;

@@ -1,4 +1,4 @@
-package dataaccess;
+package dataAccess;
 
 public class DatabaseRegistry {
     private static final AuthDAO authDAO = new InMemoryAuthDAO();
