@@ -125,58 +125,138 @@ public class ChessGame {
     }
 
     private boolean kingCheck(ChessPosition start, TeamColor team, ChessBoard grid) {
-        int[][] straight = {
-                {1, 0},
-                {0, 1},
-                {-1, 0},
-                {0, -1}
-        };
-        int[][] diagonal = {
-                {1, 1},
-                {1, -1},
-                {-1, 1},
-                {-1, -1}
-        };
-        int[][] knightMoves = {
-                {2, 1},
-                {2, -1},
-                {-2, 1},
-                {-2, -1},
-                {1, 2},
-                {1, -2},
-                {-1, 2},
-                {-1, -2}
-        };
+        int[][] straight = getInts(ChessPiece.ROOK);
+        int[][] diagonal = getInts(ChessPiece.Bishop);
+        int[][] knightMoves = getInts(ChessPiece.Knight);
         int row;
         int col;
 
         //Rook and Queen handling
         for (int[] dir : straight) {
-            var piecePos = checkDirs(dir, start, grid);
-            if (piecePos != null) {
-                if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
-                    return true;
-                } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
-                    return true;
+            int deltaRow = dir[0];
+            int deltaCol = dir[1];
+
+            row = start.getRow();
+            col = start.getColumn();
+
+            while (true) {
+                row += deltaRow;
+                col += deltaCol;
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
+                    break;
                 }
-                break;
+                ChessPosition pos = new ChessPosition(row, col);
+                var piecePos = grid.getPiece(pos);
+                if (piecePos != null) {
+                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
+                        return true;
+                    } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
+                        return true;
+                    }
+                    break;
+                }
             }
         }
 
         //Bishop and part queen handling
         for (int[] dir : diagonal) {
-            var piecePos = checkDirs(dir, start, grid);
-            if (piecePos != null) {
-                if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.BISHOP) {
-                    return true;
-                } else if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
-                    return true;
-                } else 
-                break;
+            int deltaRow = dir[0];
+            int deltaCol = dir[1];
+
+            row = start.getRow();
+            col = start.getColumn();
+
+            while (true) {
+                row += deltaRow;
+                col += deltaCol;
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
+                    break;
+                }
+                ChessPosition pos = new ChessPosition(row, col);
+                var piecePos = grid.getPiece(pos);
+                if (piecePos != null) {
+                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
+                        return true;
+                    } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        return true;
+                    }
+                    break;
+                }
             }
         }
 
-        //Knight handling
+        if (handleKnight(start, grid, team) { return true; }
+
+        if (handleKing(start, grid, team) { return true; }
+        
+        if (handlePawn(start, grid, team) { return true; }
+        
+        return false;
+    }
+
+     private static int[][] getInts(ChessPiece piece) {
+        int[][] directions = {
+                {}
+        };
+        if (piece.getPieceType() == PieceType.ROOK) {
+            directions = new int[][]{
+                    {-1, 0}, //Up
+                    {0, -1}, //Right
+                    {1, 0}, //Down
+                    {0, 1}, //Left
+            };
+        }
+        if (piece.getPieceType() == PieceType.BISHOP) {
+            directions = new int[][]{
+                    {-1, -1},
+                    {1, -1},
+                    {1, 1},
+                    {-1, 1},
+            };
+        }
+        if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            directions = new int[][]{
+                    {1, 0},
+                    {1, 1},
+                    {1, -1}
+            };
+        }
+        if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            directions = new int[][]{
+                    {-1, 0},
+                    {-1, -1},
+                    {-1, 1}
+            };
+        }
+        if (piece.getPieceType() == PieceType.KING || piece.getPieceType() == PieceType.QUEEN) {
+            directions = new int[][]{
+                    {-1, 0},
+                    {-1, 1},
+                    {-1, -1},
+                    {1, 0},
+                    {1, 1},
+                    {0, 1},
+                    {0, -1},
+                    {1, -1}
+            };
+        }
+        if (piece.getPieceType() == PieceType.KNIGHT) {
+            directions = new int[][]{
+                    {-1, 2},
+                    {-2, 1},
+                    {1, 2},
+                    {2, 1},
+                    {2, -1},
+                    {1, -2},
+                    {-1, -2},
+                    {-2, -1}
+            };
+        }
+        return directions;
+    }
+
+    private boolean handleKnight(ChessPosition start, ChessBoard grid, TeamColor team) {
+        int[][] knightMoves = getInts(ChessPiece.Knight);
         for (int[] dir : knightMoves) {
             int deltaRow = dir[0];
             int deltaCol = dir[1];
@@ -198,16 +278,19 @@ public class ChessGame {
                 }
             }
         }
-
-        //King Handling Straight and diagonal handling
+    }
+    
+    private boolean handleKing(ChessPosition start, ChessBoard grid, TeamColor team) {
+        int[][] straight = getInts(ChessPiece.Rook);
+        int[][] diagonal = getInts(ChessPiece.Bishop);
         int[][][] directions = {straight, diagonal};
         for (int[][] dirSet : directions) {
             for (int[] dir : dirSet) {
                 int deltaRow = dir[0];
                 int deltaCol = dir[1];
 
-                row = start.getRow();
-                col = start.getColumn();
+                int row = start.getRow();
+                int col = start.getColumn();
 
                 row += deltaRow;
                 col += deltaCol;
@@ -218,15 +301,16 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING) {
-                        return true;
-                    }
+                    return (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING);
                 }
             }
         }
-        //Pawn Handling
-        row = start.getRow();
-        col = start.getColumn();
+        return false;
+    }
+    
+    private boolean handlePawn(ChessPosition start, ChessBoard grid, TeamColor team) {
+        int row = start.getRow();
+        int col = start.getColumn();
         int deltaRow;
         if (team == TeamColor.BLACK) {
             deltaRow = -1;
@@ -254,26 +338,7 @@ public class ChessGame {
         }
         return false;
     }
-
-    private ChessPiece checkDirs(int[] dir, ChessPosition start, ChessBoard grid) {
-        int deltaRow = dir[0];
-        int deltaCol = dir[1];
-
-        int row = start.getRow();
-        int col = start.getColumn();
-
-        while (true) {
-            row += deltaRow;
-            col += deltaCol;
-            if (row < 1 || row > 8 || col < 1 || col > 8) {
-                break;
-            }
-            ChessPosition pos = new ChessPosition(row, col);
-            return grid.getPiece(pos);
-        }
-        return null;
-    }
-
+    
     /**
      * Determines if the given team is in checkmate
      *
