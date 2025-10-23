@@ -40,11 +40,11 @@ public class Server {
                 ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: already taken")) {
-                    String myResult = serializeE(e.get(message));
-                    ctx.status(403).result(json);
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(403).result(myResult);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    String myResult = serializeE(e.get(message));
-                    ctx.status(400).json(json);
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(400).json(myResult);
                 }
             }
         });
@@ -58,11 +58,11 @@ public class Server {
                 ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = serializeE(e.get(message));
-                    ctx.status(401).json(json);
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(401).json(myResult);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    String myResult = serializeE(e.get(message));
-                    ctx.status(400).json(json);
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(400).json(myResult);
                 }
             }
         });
@@ -74,8 +74,8 @@ public class Server {
                 ctx.status(200);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = serializeE(e.get(message));
-                    ctx.status(401).json(json);
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(401).json(myResult);
                 }
             }
         });
@@ -91,8 +91,8 @@ public class Server {
                 ctx.status(200).result(myResult).contentType("application/json");
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = serializeE(e.get(message));
-                    ctx.status(401).json(json);
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(401).json(myResult);
                 }
             }
         });
@@ -114,14 +114,14 @@ public class Server {
                 ctx.status(200).result(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = serializeE(e.get(message));
+                    String myResult = serializeE(e.getMessage());
                     ctx.status(401).json(myResult);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    String myResult = serializeE(e.get(message));
+                    String myResult = serializeE(e.getMessage());
                     ctx.status(400).json(myResult);
                 }
             }
-    };
+    }
 
     private void joinGame(Context ctx)  {
         try {
@@ -134,15 +134,15 @@ public class Server {
             } catch (DataAccessException e) {
                 switch (e.getMessage()) {
                     case "Error: unauthorized" -> {
-                        String myResult = serializeE(e.get(message));
+                        String myResult = serializeE(e.getMessage());
                         ctx.status(401).json(myResult);
                     }
                     case "Error: already taken" -> {
-                        String myResult = serializeE(e.get(message));
+                        String myResult = serializeE(e.getMessage());
                         ctx.status(403).json(myResult);
                     }
                     case "Error: bad request" -> {
-                        String myResult = serializeE(e.get(message));
+                        String myResult = serializeE(e.getMessage());
                         ctx.status(400).json(myResult);
                     }
                 }
