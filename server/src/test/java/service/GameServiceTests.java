@@ -1,7 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void createGame_success() throws DataAccessException {
+    void createGameSuccess() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -33,13 +33,13 @@ public class GameServiceTests {
     }
 
     @Test
-    void createGame_failure() {
+    void createGameFailure() {
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
         assertThrows(DataAccessException.class, () -> gameService.createGame(createGameRequest, "Fake Auth"));
     }
 
     @Test
-    void getGames_success() throws DataAccessException {
+    void getGamesSuccess() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -52,7 +52,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void getGames_failure() throws DataAccessException {
+    void getGamesFailure() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -62,7 +62,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void joinGame_failureAuth() throws DataAccessException {
+    void joinGameFailureAuth() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -74,7 +74,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void joinGame_failureColor() throws DataAccessException {
+    void joinGameFailureColor() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -86,7 +86,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void joinGame_failureNoGame() throws DataAccessException {
+    void joinGameFailureNoGame() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -98,7 +98,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void joinGame_failureFull() throws DataAccessException {
+    void joinGameFailureFull() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -112,7 +112,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void joinGame_success() throws DataAccessException {
+    void joinGameSuccess() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 

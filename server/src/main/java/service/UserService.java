@@ -1,7 +1,7 @@
 package service;
 
-import dataAccess.DataAccessException;
-import dataAccess.DatabaseRegistry;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseRegistry;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
@@ -12,8 +12,8 @@ public class UserService {
 
 
     public void clear() {
-        DatabaseRegistry.getUserDAO().clear();
-        DatabaseRegistry.getAuthDAO().clear();
+        DatabaseRegistry.getUserDao().clear();
+        DatabaseRegistry.getAuthDao().clear();
     }
 
 
@@ -21,10 +21,10 @@ public class UserService {
         if (registerRequest.password() == null || registerRequest.username() == null || registerRequest.email() == null) {
             throw new DataAccessException("Error: bad request");
         }
-        if (DatabaseRegistry.getUserDAO().getUsername(registerRequest.username())) {
+        if (DatabaseRegistry.getUserDao().getUsername(registerRequest.username())) {
             throw new DataAccessException("Error: already taken");
         }
-        DatabaseRegistry.getUserDAO().createUser(registerRequest);
+        DatabaseRegistry.getUserDao().createUser(registerRequest);
         String authToken = generateAuthToken(registerRequest.username());
         return new LoginResult(registerRequest.username(), authToken);
     }
@@ -33,10 +33,10 @@ public class UserService {
         if ((loginRequest.username() == null || loginRequest.password() == null)) {
             throw new DataAccessException("Error: bad request");
         }
-        if (!DatabaseRegistry.getUserDAO().getUsername(loginRequest.username())) {
+        if (!DatabaseRegistry.getUserDao().getUsername(loginRequest.username())) {
             throw new DataAccessException("Error: unauthorized");
         }
-        if (!DatabaseRegistry.getUserDAO().matchPassword(loginRequest.username(), loginRequest.password())) {
+        if (!DatabaseRegistry.getUserDao().matchPassword(loginRequest.username(), loginRequest.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
         String authToken = generateAuthToken(loginRequest.username());
@@ -49,23 +49,23 @@ public class UserService {
 
     private String generateAuthToken(String username) {
         String authToken = UUID.randomUUID().toString();
-        DatabaseRegistry.getAuthDAO().saveAuth(authToken, username);
+        DatabaseRegistry.getAuthDao().saveAuth(authToken, username);
         return authToken;
     }
 
     private void invalidateToken(String auth) throws DataAccessException {
-        if (DatabaseRegistry.getAuthDAO().getAuth(auth)) {
-            DatabaseRegistry.getAuthDAO().removeAuth(auth);
+        if (DatabaseRegistry.getAuthDao().getAuth(auth)) {
+            DatabaseRegistry.getAuthDao().removeAuth(auth);
             return;
         }
         throw new DataAccessException("Error: unauthorized");
     }
 
     public boolean getAuth(String authToken) {
-        return DatabaseRegistry.getAuthDAO().getAuth(authToken);
+        return DatabaseRegistry.getAuthDao().getAuth(authToken);
     }
 
     public String getUsername(String authToken) {
-        return DatabaseRegistry.getAuthDAO().getUsername(authToken);
+        return DatabaseRegistry.getAuthDao().getUsername(authToken);
     }
 }

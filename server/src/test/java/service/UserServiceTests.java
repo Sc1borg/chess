@@ -1,7 +1,7 @@
 package service;
 
 
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
@@ -20,7 +20,7 @@ class UserServiceTests {
     }
 
     @Test
-    void registerUser_success() throws DataAccessException {
+    void registerUserSuccess() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -29,7 +29,7 @@ class UserServiceTests {
     }
 
     @Test
-    void registerUser_failure() throws DataAccessException {
+    void registerUserFailure() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -38,7 +38,7 @@ class UserServiceTests {
     }
 
     @Test
-    void loginUser_success() throws DataAccessException {
+    void loginUserSuccess() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult1 = userService.register(registerRequest);
 
@@ -50,14 +50,14 @@ class UserServiceTests {
     }
 
     @Test
-    void loginUser_failure() {
+    void loginUserFailure() {
         LoginRequest loginRequest = new LoginRequest("username", "password");
 
         assertThrows(DataAccessException.class, () -> userService.login(loginRequest));
     }
 
     @Test
-    void logoutUser_success() throws DataAccessException {
+    void logoutUserSuccess() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 
@@ -68,7 +68,7 @@ class UserServiceTests {
     }
 
     @Test
-    void logoutUser_failure() throws DataAccessException {
+    void logoutUserFailure() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         LoginResult loginResult = userService.register(registerRequest);
 

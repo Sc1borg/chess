@@ -167,8 +167,10 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.ROOK)) {
-                        return true;
+                    if (piecePos.getTeamColor() != team) {
+                        if (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
+                            return true;
+                        }
                     }
                     break;
                 }
@@ -192,10 +194,12 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.BISHOP)) {
-                        return true;
+                    if (piecePos.getTeamColor() != team) {
+                        if (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN || piecePos.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                            return true;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }

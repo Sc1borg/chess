@@ -54,7 +54,9 @@ public class ChessPiece {
      */
     public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition start) {
         ChessPiece piece = board.getPiece(start);
-        if (piece == null) {return null;}
+        if (piece == null) {
+            return null;
+        }
         Collection<ChessMove> moves = new ArrayList<>();
         int[][] directions = getInts(piece);
         int row;
@@ -85,8 +87,7 @@ public class ChessPiece {
                     }
                 }
             }
-        }
-        else if (piece.getPieceType() == PieceType.KING || piece.getPieceType() == PieceType.KNIGHT) {
+        } else if (piece.getPieceType() == PieceType.KING || piece.getPieceType() == PieceType.KNIGHT) {
             for (int[] dir : directions) {
                 int deltaRow = dir[0];
                 int deltaCol = dir[1];
@@ -107,8 +108,7 @@ public class ChessPiece {
                     moves.add(new ChessMove(start, pos, null));
                 }
             }
-        }
-        else if (piece.getPieceType() == PieceType.PAWN){
+        } else if (piece.getPieceType() == PieceType.PAWN) {
             for (int[] dir : directions) {
                 int deltaRow = dir[0];
                 int deltaCol = dir[1];
@@ -127,24 +127,31 @@ public class ChessPiece {
                     if (col == start.getColumn()) {
                         if (row == 8 || row == 1) {
                             for (var promo : PieceType.values()) {
-                                if (promo == PieceType.PAWN || promo == PieceType.KING) {continue;}
+                                if (promo == PieceType.PAWN || promo == PieceType.KING) {
+                                    continue;
+                                }
                                 moves.add(new ChessMove(start, pos, promo));
                             }
+                        } else {
+                            moves.add(new ChessMove(start, pos, null));
                         }
-                        else {moves.add(new ChessMove(start, pos, null));}
+                    } else {
+                        continue;
                     }
-                    else {continue;}
                 }
                 if (col != start.getColumn() && piecePos != null && piecePos.getTeamColor() != piece.getTeamColor()) {
                     if (row == 8 || row == 1) {
                         for (var promo : PieceType.values()) {
-                            if (promo == PieceType.PAWN || promo == PieceType.KING) {continue;}
+                            if (promo == PieceType.PAWN || promo == PieceType.KING) {
+                                continue;
+                            }
                             moves.add(new ChessMove(start, pos, promo));
                         }
+                    } else {
+                        moves.add(new ChessMove(start, pos, null));
                     }
-                    else {moves.add(new ChessMove(start, pos, null));}
                 }
-                if (start.getRow() == 2 && piecePos == null && piece.getTeamColor()== ChessGame.TeamColor.WHITE) {
+                if (start.getRow() == 2 && piecePos == null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                     row += deltaRow;
                     pos = new ChessPosition(row, col);
                     piecePos = board.getPiece(pos);
@@ -152,7 +159,7 @@ public class ChessPiece {
                         moves.add(new ChessMove(start, pos, null));
                     }
                 }
-                if (start.getRow() == 7 && piecePos == null && piece.getTeamColor()== ChessGame.TeamColor.BLACK) {
+                if (start.getRow() == 7 && piecePos == null && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                     row += deltaRow;
                     pos = new ChessPosition(row, col);
                     piecePos = board.getPiece(pos);
@@ -231,8 +238,12 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
         ChessPiece that = (ChessPiece) obj;
         return (getTeamColor() == that.getTeamColor()) && (getPieceType() == that.getPieceType());
     }

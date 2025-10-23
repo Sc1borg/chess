@@ -1,4 +1,4 @@
-package dataAccess;
+package dataaccess;
 
 import model.GameData;
 
@@ -6,30 +6,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryGameDAO implements GameDAO {
-    private final static HashMap<Integer, GameData> gameDataMap = new HashMap<>();
+    private final static HashMap<Integer, GameData> GAME_DATA_MAP = new HashMap<>();
 
     @Override
     public void clear() {
-        gameDataMap.clear();
+        GAME_DATA_MAP.clear();
     }
 
     @Override
     public ArrayList<GameData> getGames() {
-        return new ArrayList<>(gameDataMap.values());
+        return new ArrayList<>(GAME_DATA_MAP.values());
     }
 
     @Override
     public void createGame(GameData gameData) {
-        gameDataMap.put(gameData.gameID(), gameData);
+        GAME_DATA_MAP.put(gameData.gameID(), gameData);
     }
 
     public boolean getGame(int gameID) {
-        return gameDataMap.containsKey(gameID);
+        return GAME_DATA_MAP.containsKey(gameID);
     }
 
 
     public boolean joinGame(int gameID, String playerColor, String username) {
-        GameData gameData = gameDataMap.get(gameID);
+        GameData gameData = GAME_DATA_MAP.get(gameID);
         GameData newGameData;
 
         if (playerColor.equals("BLACK") && gameData.blackUsername() == null) {
@@ -39,7 +39,7 @@ public class InMemoryGameDAO implements GameDAO {
         } else {
             return false;
         }
-        gameDataMap.put(gameID, newGameData);
+        GAME_DATA_MAP.put(gameID, newGameData);
         return true;
     }
 }
