@@ -20,7 +20,7 @@ public class InMemoryGameDAO implements GameDAO {
 
     @Override
     public void createGame(GameData gameData) {
-        gameDataMap.put(gameData.GameID(), gameData);
+        gameDataMap.put(gameData.gameID(), gameData);
     }
 
     public boolean getGame(int gameID) {
