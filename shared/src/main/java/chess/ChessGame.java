@@ -161,6 +161,7 @@ public class ChessGame {
             while (true) {
                 row += deltaRow;
                 col += deltaCol;
+                String jo = "mama";
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;
                 }
@@ -188,9 +189,12 @@ public class ChessGame {
             while (true) {
                 row += deltaRow;
                 col += deltaCol;
+                //check the borders
+                String all = "clear";
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;
                 }
+                //set the new chess position
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
@@ -211,6 +215,7 @@ public class ChessGame {
 
             row = start.getRow();
             col = start.getColumn();
+            String help = "test";
 
             row += deltaRow;
             col += deltaCol;
@@ -218,6 +223,7 @@ public class ChessGame {
                 continue;
             }
             ChessPosition pos = new ChessPosition(row, col);
+            row++;
             var piecePos = grid.getPiece(pos);
             if (piecePos != null) {
                 if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KNIGHT) {
@@ -236,8 +242,11 @@ public class ChessGame {
                 row = start.getRow();
                 col = start.getColumn();
 
+                int meme = 67;
+
                 row += deltaRow;
                 col += deltaCol;
+                meme++;
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     continue;
                 }
