@@ -152,55 +152,27 @@ public class ChessGame {
 
         //Rook and Queen handling
         for (int[] dir : straight) {
-            int deltaRow = dir[0];
-            int deltaCol = dir[1];
-
-            row = start.getRow();
-            col = start.getColumn();
-
-            while (true) {
-                row += deltaRow;
-                col += deltaCol;
-                if (row < 1 || row > 8 || col < 1 || col > 8) {
-                    break;
+            var piecePos = checkDirs(dir, start, grid);
+            if (piecePos != null) {
+                if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
+                    return true;
+                } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
+                    return true;
                 }
-                ChessPosition pos = new ChessPosition(row, col);
-                var piecePos = grid.getPiece(pos);
-                if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
-                        return true;
-                    } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.ROOK) {
-                        return true;
-                    }
-                    break;
-                }
+                break;
             }
         }
 
         //Bishop and part queen handling
         for (int[] dir : diagonal) {
-            int deltaRow = dir[0];
-            int deltaCol = dir[1];
-
-            row = start.getRow();
-            col = start.getColumn();
-
-            while (true) {
-                row += deltaRow;
-                col += deltaCol;
-                if (row < 1 || row > 8 || col < 1 || col > 8) {
-                    break;
-                }
-                ChessPosition pos = new ChessPosition(row, col);
-                var piecePos = grid.getPiece(pos);
-                if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
-                        return true;
-                    } else if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.BISHOP) {
-                        return true;
-                    }
-                    break;
-                }
+            var piecePos = checkDirs(dir, start, grid);
+            if (piecePos != null) {
+                if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                    return true;
+                } else if (piecePos.getTeamColor() != team && (piecePos.getPieceType() == ChessPiece.PieceType.QUEEN)) {
+                    return true;
+                } else 
+                break;
             }
         }
 
@@ -281,6 +253,25 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+    private ChessPiece checkDirs(int[] dir, ChessPosition start, ChessBoard grid) {
+        int deltaRow = dir[0];
+        int deltaCol = dir[1];
+
+        int row = start.getRow();
+        int col = start.getColumn();
+
+        while (true) {
+            row += deltaRow;
+            col += deltaCol;
+            if (row < 1 || row > 8 || col < 1 || col > 8) {
+                break;
+            }
+            ChessPosition pos = new ChessPosition(row, col);
+            return grid.getPiece(pos);
+        }
+        return null;
     }
 
     /**
