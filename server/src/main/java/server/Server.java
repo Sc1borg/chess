@@ -40,15 +40,11 @@ public class Server {
                 if (e.getMessage().equals("Error: already taken")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-                    errorInfo.put("type", e.getClass().getSimpleName());
-                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                     String json = gson.toJson(errorInfo);
                     ctx.status(403).result(json);
                 } else if (e.getMessage().equals("Error: bad request")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-                    errorInfo.put("type", e.getClass().getSimpleName());
-                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                     String json = gson.toJson(errorInfo);
                     ctx.status(400).json(json);
                 }
@@ -66,15 +62,11 @@ public class Server {
                 if (e.getMessage().equals("Error: unauthorized")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-                    errorInfo.put("type", e.getClass().getSimpleName());
-                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                     String json = gson.toJson(errorInfo);
                     ctx.status(401).json(json);
                 } else if (e.getMessage().equals("Error: bad request")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-                    errorInfo.put("type", e.getClass().getSimpleName());
-                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                     String json = gson.toJson(errorInfo);
                     ctx.status(400).json(json);
                 }
@@ -90,8 +82,6 @@ public class Server {
                 if (e.getMessage().equals("Error: unauthorized")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-                    errorInfo.put("type", e.getClass().getSimpleName());
-                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                     String json = gson.toJson(errorInfo);
                     ctx.status(401).json(json);
                 }
@@ -111,16 +101,19 @@ public class Server {
                 if (e.getMessage().equals("Error: unauthorized")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-                    errorInfo.put("type", e.getClass().getSimpleName());
-                    errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                     String json = gson.toJson(errorInfo);
                     ctx.status(401).json(json);
                 }
             }
         });
 
-        javalin.post("/game", ctx -> {
-            try {
+        javalin.post("/game", this.joinGame(ctx);
+
+        javalin.put("/game", this.listGames(ctx);
+    }
+
+    private void joinGame(ctx) {
+        try {
                 String auth = ctx.header("authorization");
                 CreateGameRequest createGameRequest = gson.fromJson(ctx.body(), CreateGameRequest.class);
 
@@ -133,21 +126,19 @@ public class Server {
                 if (e.getMessage().equals("Error: unauthorized")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-
                     String myResult = gson.toJson(errorInfo);
                     ctx.status(401).json(myResult);
                 } else if (e.getMessage().equals("Error: bad request")) {
                     Map<String, String> errorInfo = new HashMap<>();
                     errorInfo.put("message", e.getMessage());
-
                     String myResult = gson.toJson(errorInfo);
                     ctx.status(400).json(myResult);
                 }
             }
-        });
+    }
 
-        javalin.put("/game", ctx -> {
-            try {
+    private void listGames(ctx) {
+        try {
                 String auth = ctx.header("authorization");
                 JoinGameRequest joinGameRequest = gson.fromJson(ctx.body(), JoinGameRequest.class);
 
@@ -159,31 +150,23 @@ public class Server {
                     case "Error: unauthorized" -> {
                         Map<String, String> errorInfo = new HashMap<>();
                         errorInfo.put("message", e.getMessage());
-                        errorInfo.put("type", e.getClass().getSimpleName());
-                        errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                         String myResult = gson.toJson(errorInfo);
                         ctx.status(401).json(myResult);
                     }
                     case "Error: already taken" -> {
                         Map<String, String> errorInfo = new HashMap<>();
                         errorInfo.put("message", e.getMessage());
-                        errorInfo.put("type", e.getClass().getSimpleName());
-                        errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                         String myResult = gson.toJson(errorInfo);
                         ctx.status(403).json(myResult);
                     }
                     case "Error: bad request" -> {
                         Map<String, String> errorInfo = new HashMap<>();
                         errorInfo.put("message", e.getMessage());
-                        errorInfo.put("type", e.getClass().getSimpleName());
-                        errorInfo.put("stackTrace", Arrays.toString(e.getStackTrace()));
                         String myResult = gson.toJson(errorInfo);
                         ctx.status(400).json(myResult);
                     }
                 }
             }
-        });
-
     }
 
     public int run(int desiredPort) {
