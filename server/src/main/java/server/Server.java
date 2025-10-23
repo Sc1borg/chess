@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 import model.*;
 import service.GameService;
 import service.UserService;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class Server {
 
@@ -107,12 +109,12 @@ public class Server {
             }
         });
 
-        javalin.post("/game", this.joinGame(ctx);
+        javalin.post("/game", this::createGame);
 
-        javalin.put("/game", this.listGames(ctx);
+        javalin.put("/game", this::joinGame);
     }
 
-    private void joinGame(ctx) {
+    private void createGame(Context ctx) {
         try {
                 String auth = ctx.header("authorization");
                 CreateGameRequest createGameRequest = gson.fromJson(ctx.body(), CreateGameRequest.class);
@@ -135,9 +137,9 @@ public class Server {
                     ctx.status(400).json(myResult);
                 }
             }
-    }
+    };
 
-    private void listGames(ctx) {
+    private void joinGame(Context ctx)  {
         try {
                 String auth = ctx.header("authorization");
                 JoinGameRequest joinGameRequest = gson.fromJson(ctx.body(), JoinGameRequest.class);
