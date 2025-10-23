@@ -198,7 +198,7 @@ public class ChessGame {
         int[][] directions = {
                 {}
         };
-        if (pieceType == PieceType.ROOK) {
+        if (pieceType == ChessPiece.PieceType.ROOK) {
             directions = new int[][]{
                     {-1, 0}, //Up
                     {0, -1}, //Right
@@ -206,7 +206,7 @@ public class ChessGame {
                     {0, 1}, //Left
             };
         }
-        if (pieceType == PieceType.BISHOP) {
+        if (pieceType == ChessPiece.PieceType.BISHOP) {
             directions = new int[][]{
                     {-1, -1},
                     {1, -1},
@@ -214,33 +214,7 @@ public class ChessGame {
                     {-1, 1},
             };
         }
-        if (pieceType == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            directions = new int[][]{
-                    {1, 0},
-                    {1, 1},
-                    {1, -1}
-            };
-        }
-        if (pieceType == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            directions = new int[][]{
-                    {-1, 0},
-                    {-1, -1},
-                    {-1, 1}
-            };
-        }
-        if (pieceType == PieceType.KING || piece.getPieceType() == PieceType.QUEEN) {
-            directions = new int[][]{
-                    {-1, 0},
-                    {-1, 1},
-                    {-1, -1},
-                    {1, 0},
-                    {1, 1},
-                    {0, 1},
-                    {0, -1},
-                    {1, -1}
-            };
-        }
-        if (pieceType == PieceType.KNIGHT) {
+        if (pieceType == ChessPiece.PieceType.KNIGHT) {
             directions = new int[][]{
                     {-1, 2},
                     {-2, 1},
