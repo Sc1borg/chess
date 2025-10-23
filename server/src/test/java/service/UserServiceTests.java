@@ -31,7 +31,7 @@ class UserServiceTests {
     @Test
     void registerUser_failure() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult _ = userService.register(registerRequest);
+        LoginResult loginResult = userService.register(registerRequest);
 
         assertThrows(DataAccessException.class, () -> userService.register(registerRequest));
 
@@ -40,7 +40,7 @@ class UserServiceTests {
     @Test
     void loginUser_success() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult _ = userService.register(registerRequest);
+        LoginResult loginResult1 = userService.register(registerRequest);
 
         LoginRequest loginRequest = new LoginRequest("username", "password");
         LoginResult loginResult = userService.login(loginRequest);
@@ -70,7 +70,7 @@ class UserServiceTests {
     @Test
     void logoutUser_failure() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult _ = userService.register(registerRequest);
+        LoginResult loginResult = userService.register(registerRequest);
 
         assertThrows(DataAccessException.class, () -> userService.logout("Invalid Auth"));
     }
