@@ -31,12 +31,15 @@ public class Server {
             try {
                 RegisterRequest registerRequest = gson.fromJson(ctx.body(), RegisterRequest.class);
                 LoginResult loginResult = userService.register(registerRequest);
-                ctx.status(200).json(loginResult);
+                String myResult = gson.toJson(loginResult);
+                ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: already taken")) {
-                    ctx.status(403).json(e);
-                } else {
-                    ctx.status(500);
+                    String myResult = gson.toJson(e);
+                    ctx.status(403).json(myResult);
+                } else if (e.getMessage().equals("Error: bad request")) {
+                    String myResult = gson.toJson(e);
+                    ctx.status(400).json(myResult);
                 }
             }
         });
@@ -46,10 +49,28 @@ public class Server {
             try {
                 LoginRequest loginRequest = gson.fromJson(ctx.body(), LoginRequest.class);
                 LoginResult loginResult = userService.login(loginRequest);
-                ctx.status(200).json(loginResult);
+                String myResult = gson.toJson(loginResult);
+                ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    ctx.status(401).json(e);
+                    String myResult = gson.toJson(e);
+                    ctx.status(401).json(myResult);
+                } else if (e.getMessage().equals("Error: bad request")) {
+                    String myResult = gson.toJson(e);
+                    ctx.status(400).json(myResult);
+                }
+            }
+        });
+
+        javalin.delete("/session", ctx -> {
+            try {
+                String auth = ctx.header("authorization");
+                userService.logout(auth);
+                ctx.status(200);
+            } catch (DataAccessException e) {
+                if (e.getMessage().equals("Error: unauthorized")) {
+                    String myResult = gson.toJson(e);
+                    ctx.status(401).json(myResult);
                 }
             }
         });
@@ -59,11 +80,13 @@ public class Server {
             try {
                 String auth = ctx.header("authorization");
                 ArrayList<GameData> games = gameService.getGames(auth);
-                ctx.status(200).json(games);
+                String myResult = gson.toJson(games);
+                ctx.status(200).json(myResult);
 
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    ctx.status(401).json(e);
+                    String myResult = gson.toJson(e);
+                    ctx.status(401).json(myResult);
                 }
             }
         });
@@ -74,10 +97,12 @@ public class Server {
                 CreateGameRequest createGameRequest = gson.fromJson(ctx.body(), CreateGameRequest.class);
 
                 int gameId = gameService.createGame(createGameRequest, auth);
-                ctx.status(200).json(gameId);
+                String myResult = gson.toJson(gameId);
+                ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    ctx.status(401).json(e);
+                    String myResult = gson.toJson(e);
+                    ctx.status(401).json(myResult);
                 }
             }
         });
@@ -88,15 +113,20 @@ public class Server {
                 JoinGameRequest joinGameRequest = gson.fromJson(ctx.body(), JoinGameRequest.class);
 
                 gameService.joinGame(joinGameRequest, auth);
+
+                ctx.status(200);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    ctx.status(401).json(e);
+                    String myResult = gson.toJson(e);
+                    ctx.status(401).json(myResult);
                 }
                 if (e.getMessage().equals("Error: already taken")) {
-                    ctx.status(401).json(e);
+                    String myResult = gson.toJson(e);
+                    ctx.status(401).json(myResult);
                 }
                 if (e.getMessage().equals("Error: bad request")) {
-                    ctx.status(401).json(e);
+                    String myResult = gson.toJson(e);
+                    ctx.status(401).json(myResult);
                 }
             }
         });
