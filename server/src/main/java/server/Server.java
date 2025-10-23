@@ -40,14 +40,10 @@ public class Server {
                 ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: already taken")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String json = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(403).result(json);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String json = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(400).json(json);
                 }
             }
@@ -62,14 +58,10 @@ public class Server {
                 ctx.status(200).json(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String json = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(401).json(json);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String json = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(400).json(json);
                 }
             }
@@ -82,9 +74,7 @@ public class Server {
                 ctx.status(200);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String json = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(401).json(json);
                 }
             }
@@ -101,9 +91,7 @@ public class Server {
                 ctx.status(200).result(myResult).contentType("application/json");
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String json = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(401).json(json);
                 }
             }
@@ -126,14 +114,10 @@ public class Server {
                 ctx.status(200).result(myResult);
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String myResult = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(401).json(myResult);
                 } else if (e.getMessage().equals("Error: bad request")) {
-                    Map<String, String> errorInfo = new HashMap<>();
-                    errorInfo.put("message", e.getMessage());
-                    String myResult = gson.toJson(errorInfo);
+                    String myResult = serializeE(e.get(message));
                     ctx.status(400).json(myResult);
                 }
             }
@@ -150,25 +134,25 @@ public class Server {
             } catch (DataAccessException e) {
                 switch (e.getMessage()) {
                     case "Error: unauthorized" -> {
-                        Map<String, String> errorInfo = new HashMap<>();
-                        errorInfo.put("message", e.getMessage());
-                        String myResult = gson.toJson(errorInfo);
+                        String myResult = serializeE(e.get(message));
                         ctx.status(401).json(myResult);
                     }
                     case "Error: already taken" -> {
-                        Map<String, String> errorInfo = new HashMap<>();
-                        errorInfo.put("message", e.getMessage());
-                        String myResult = gson.toJson(errorInfo);
+                        String myResult = serializeE(e.get(message));
                         ctx.status(403).json(myResult);
                     }
                     case "Error: bad request" -> {
-                        Map<String, String> errorInfo = new HashMap<>();
-                        errorInfo.put("message", e.getMessage());
-                        String myResult = gson.toJson(errorInfo);
+                        String myResult = serializeE(e.get(message));
                         ctx.status(400).json(myResult);
                     }
                 }
             }
+    }
+
+    private String serializeE(String eMessage) {
+        Map<String, String> errorInfo = new HashMap<>();
+        errorInfo.put("message", eMessage);
+        return gson.toJson(errorInfo);
     }
 
     public int run(int desiredPort) {
