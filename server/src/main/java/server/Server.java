@@ -59,10 +59,10 @@ public class Server {
             } catch (DataAccessException e) {
                 if (e.getMessage().equals("Error: unauthorized")) {
                     String myResult = serializeE(e.getMessage());
-                    ctx.status(401).json(myResult);
+                    ctx.status(401).result(myResult);
                 } else if (e.getMessage().equals("Error: bad request")) {
                     String myResult = serializeE(e.getMessage());
-                    ctx.status(400).json(myResult);
+                    ctx.status(400).result(myResult);
                 }
             }
         });
