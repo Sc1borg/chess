@@ -185,20 +185,20 @@ public class ChessGame {
             }
         }
 
-        if (handleKnight(start, grid, team) { return true; }
+        if (handleKnight(start, grid, team)) { return true; }
 
-        if (handleKing(start, grid, team) { return true; }
+        if (handleKing(start, grid, team)) { return true; }
         
-        if (handlePawn(start, grid, team) { return true; }
+        if (handlePawn(start, grid, team)) { return true; }
         
         return false;
     }
 
-     private static int[][] getInts(ChessPiece piece) {
+     private static int[][] getInts(ChessPiece.PieceType pieceType) {
         int[][] directions = {
                 {}
         };
-        if (piece.getPieceType() == PieceType.ROOK) {
+        if (pieceType == PieceType.ROOK) {
             directions = new int[][]{
                     {-1, 0}, //Up
                     {0, -1}, //Right
@@ -206,7 +206,7 @@ public class ChessGame {
                     {0, 1}, //Left
             };
         }
-        if (piece.getPieceType() == PieceType.BISHOP) {
+        if (pieceType == PieceType.BISHOP) {
             directions = new int[][]{
                     {-1, -1},
                     {1, -1},
@@ -214,21 +214,21 @@ public class ChessGame {
                     {-1, 1},
             };
         }
-        if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+        if (pieceType == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             directions = new int[][]{
                     {1, 0},
                     {1, 1},
                     {1, -1}
             };
         }
-        if (piece.getPieceType() == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+        if (pieceType == PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             directions = new int[][]{
                     {-1, 0},
                     {-1, -1},
                     {-1, 1}
             };
         }
-        if (piece.getPieceType() == PieceType.KING || piece.getPieceType() == PieceType.QUEEN) {
+        if (pieceType == PieceType.KING || piece.getPieceType() == PieceType.QUEEN) {
             directions = new int[][]{
                     {-1, 0},
                     {-1, 1},
@@ -240,7 +240,7 @@ public class ChessGame {
                     {1, -1}
             };
         }
-        if (piece.getPieceType() == PieceType.KNIGHT) {
+        if (pieceType == PieceType.KNIGHT) {
             directions = new int[][]{
                     {-1, 2},
                     {-2, 1},
@@ -261,8 +261,8 @@ public class ChessGame {
             int deltaRow = dir[0];
             int deltaCol = dir[1];
 
-            row = start.getRow();
-            col = start.getColumn();
+            int row = start.getRow();
+            int col = start.getColumn();
 
             row += deltaRow;
             col += deltaCol;
@@ -278,6 +278,7 @@ public class ChessGame {
                 }
             }
         }
+        return false;
     }
     
     private boolean handleKing(ChessPosition start, ChessBoard grid, TeamColor team) {
