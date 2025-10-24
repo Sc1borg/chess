@@ -128,26 +128,24 @@ public class ChessPiece {
                     promotionRow(start, moves, row, pos);
                 }
                 if (start.getRow() == 2 && piecePos == null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                    row += deltaRow;
-                    pos = new ChessPosition(row, col);
-                    piecePos = board.getPiece(pos);
-                    if (piecePos == null) {
-                        moves.add(new ChessMove(start, pos, null));
-                    }
+                    initialMove(start, moves, row, col, deltaRow, board);
                 }
                 if (start.getRow() == 7 && piecePos == null && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-                    row += deltaRow;
-                    pos = new ChessPosition(row, col);
-                    piecePos = board.getPiece(pos);
-                    if (piecePos == null) {
-                        moves.add(new ChessMove(start, pos, null));
-                    }
-
+                    initialMove(start, moves, row, col, deltaRow, board);
                 }
 
             }
         }
         return moves;
+    }
+
+    private static void initialMove(ChessPosition start, Collection<ChessMove> moves, int row, int col, int deltaRow, ChessBoard board) {
+        row += deltaRow;
+        ChessPosition pos = new ChessPosition(row, col);
+        ChessPiece piecePos = board.getPiece(pos);
+        if (piecePos == null) {
+            moves.add(new ChessMove(start, pos, null));
+        }
     }
 
     private static void promotionRow(ChessPosition start, Collection<ChessMove> moves, int row, ChessPosition pos) {
@@ -210,6 +208,7 @@ public class ChessPiece {
             };
         }
         if (piece.getPieceType() == PieceType.KNIGHT) {
+            String pieceType = "Knight";
             directions = new int[][]{
                     {-1, 2},
                     {-2, 1},
