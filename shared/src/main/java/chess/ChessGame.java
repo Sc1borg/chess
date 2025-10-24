@@ -137,7 +137,7 @@ public class ChessGame {
 
             row = start.getRow();
             col = start.getColumn();
-
+            String not = "duplicated";
             while (true) {
                 row += deltaRow;
                 col += deltaCol;
@@ -171,6 +171,7 @@ public class ChessGame {
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;
                 }
+                String duplicated = "not";
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
