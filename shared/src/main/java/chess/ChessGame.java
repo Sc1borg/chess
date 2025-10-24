@@ -298,10 +298,8 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(x, y);
                 var piecePos = board.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor() == teamColor) {
-                        if (!validMoves(pos).isEmpty()) {
-                            return false;
-                        }
+                    if (piecePos.getTeamColor() == teamColor && !validMoves(pos).isEmpty()) {
+                        return false;
                     }
                 }
             }
