@@ -14,12 +14,12 @@ public class GameService {
     UserService userService = new UserService();
 
     public void clear() {
-        DatabaseRegistry.getGameDAO().clear();
+        DatabaseRegistry.getGameDao().clear();
     }
 
     public ArrayList<GameData> getGames(String authToken) throws DataAccessException {
         if (userService.getAuth(authToken)) {
-            return DatabaseRegistry.getGameDAO().getGames();
+            return DatabaseRegistry.getGameDao().getGames();
         }
         throw new DataAccessException("Error: unauthorized");
     }
@@ -30,7 +30,7 @@ public class GameService {
         }
         if (userService.getAuth(authToken)) {
             int gameID = createGameID();
-            DatabaseRegistry.getGameDAO().createGame(new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame()));
+            DatabaseRegistry.getGameDao().createGame(new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame()));
             return gameID;
         }
         throw new DataAccessException("Error: unauthorized");
@@ -38,7 +38,7 @@ public class GameService {
 
     private int createGameID() {
         int gameID = 12345;
-        while (DatabaseRegistry.getGameDAO().getGame(gameID)) {
+        while (DatabaseRegistry.getGameDao().getGame(gameID)) {
             gameID += 1;
         }
         return gameID;
@@ -54,12 +54,12 @@ public class GameService {
             throw new DataAccessException("Error: unauthorized");
         }
         //Check that the game exists
-        if (!DatabaseRegistry.getGameDAO().getGame(joinGameRequest.gameID())) {
+        if (!DatabaseRegistry.getGameDao().getGame(joinGameRequest.gameID())) {
             throw new DataAccessException("Error: bad request");
         }
         //Get the username and try joining game
         String username = userService.getUsername(authToken);
-        if (!DatabaseRegistry.getGameDAO().joinGame(joinGameRequest.gameID(), joinGameRequest.playerColor(), username)) {
+        if (!DatabaseRegistry.getGameDao().joinGame(joinGameRequest.gameID(), joinGameRequest.playerColor(), username)) {
             throw new DataAccessException("Error: already taken");
         }
     }
