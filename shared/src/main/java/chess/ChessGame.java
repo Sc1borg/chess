@@ -125,28 +125,8 @@ public class ChessGame {
     }
 
     private boolean kingCheck(ChessPosition start, TeamColor team, ChessBoard grid) {
-        int[][] straight = {
-                {1, 0},
-                {0, 1},
-                {-1, 0},
-                {0, -1}
-        };
-        int[][] diagonal = {
-                {1, 1},
-                {1, -1},
-                {-1, 1},
-                {-1, -1}
-        };
-        int[][] knightMoves = {
-                {2, 1},
-                {2, -1},
-                {-2, 1},
-                {-2, -1},
-                {1, 2},
-                {1, -2},
-                {-1, 2},
-                {-1, -2}
-        };
+        int[][] straight = getInts(ChessPiece.PieceType.ROOK);
+        int[][] diagonal = getInts(ChessPiece.PieceType.BISHOP);
         int row;
         int col;
 
@@ -204,13 +184,60 @@ public class ChessGame {
             }
         }
 
-        //Knight handling
+        if (handleKnight(start, grid, team)) {
+            return true;
+        }
+
+        if (handleKing(start, grid, team)) {
+            return true;
+        }
+
+        return handlePawn(start, grid, team);
+    }
+
+    private static int[][] getInts(ChessPiece.PieceType pieceType) {
+        int[][] directions = {
+                {}
+        };
+        if (pieceType == ChessPiece.PieceType.ROOK) {
+            directions = new int[][]{
+                    {-1, 0}, //Up
+                    {0, -1}, //Right
+                    {1, 0}, //Down
+                    {0, 1}, //Left
+            };
+        }
+        if (pieceType == ChessPiece.PieceType.BISHOP) {
+            directions = new int[][]{
+                    {-1, -1},
+                    {1, -1},
+                    {1, 1},
+                    {-1, 1},
+            };
+        }
+        if (pieceType == ChessPiece.PieceType.KNIGHT) {
+            directions = new int[][]{
+                    {-1, 2},
+                    {-2, 1},
+                    {1, 2},
+                    {2, 1},
+                    {2, -1},
+                    {1, -2},
+                    {-1, -2},
+                    {-2, -1}
+            };
+        }
+        return directions;
+    }
+
+    private boolean handleKnight(ChessPosition start, ChessBoard grid, TeamColor team) {
+        int[][] knightMoves = getInts(ChessPiece.PieceType.KNIGHT);
         for (int[] dir : knightMoves) {
             int deltaRow = dir[0];
             int deltaCol = dir[1];
 
-            row = start.getRow();
-            col = start.getColumn();
+            int row = start.getRow();
+            int col = start.getColumn();
 
             row += deltaRow;
             col += deltaCol;
@@ -226,16 +253,20 @@ public class ChessGame {
                 }
             }
         }
+        return false;
+    }
 
-        //King Handling Straight and diagonal handling
+    private boolean handleKing(ChessPosition start, ChessBoard grid, TeamColor team) {
+        int[][] straight = getInts(ChessPiece.PieceType.ROOK);
+        int[][] diagonal = getInts(ChessPiece.PieceType.BISHOP);
         int[][][] directions = {straight, diagonal};
         for (int[][] dirSet : directions) {
             for (int[] dir : dirSet) {
                 int deltaRow = dir[0];
                 int deltaCol = dir[1];
 
-                row = start.getRow();
-                col = start.getColumn();
+                int row = start.getRow();
+                int col = start.getColumn();
 
                 row += deltaRow;
                 col += deltaCol;
@@ -246,15 +277,16 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(row, col);
                 var piecePos = grid.getPiece(pos);
                 if (piecePos != null) {
-                    if (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING) {
-                        return true;
-                    }
+                    return (piecePos.getTeamColor() != team && piecePos.getPieceType() == ChessPiece.PieceType.KING);
                 }
             }
         }
-        //Pawn Handling
-        row = start.getRow();
-        col = start.getColumn();
+        return false;
+    }
+
+    private boolean handlePawn(ChessPosition start, ChessBoard grid, TeamColor team) {
+        int row = start.getRow();
+        int col = start.getColumn();
         int deltaRow;
         if (team == TeamColor.BLACK) {
             deltaRow = -1;
