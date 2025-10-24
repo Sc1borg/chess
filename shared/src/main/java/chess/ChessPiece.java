@@ -65,7 +65,6 @@ public class ChessPiece {
             for (int[] dir : directions) {
                 int deltaRow = dir[0];
                 int deltaCol = dir[1];
-
                 row = start.getRow();
                 col = start.getColumn();
 
@@ -91,11 +90,8 @@ public class ChessPiece {
             for (int[] dir : directions) {
                 int deltaRow = dir[0];
                 int deltaCol = dir[1];
-
-                row = start.getRow();
-                col = start.getColumn();
-                row += deltaRow;
-                col += deltaCol;
+                row = start.getRow() + deltaRow;
+                col = start.getColumn() + deltaCol;
 
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     continue;
@@ -113,10 +109,8 @@ public class ChessPiece {
                 int deltaRow = dir[0];
                 int deltaCol = dir[1];
 
-                row = start.getRow();
-                col = start.getColumn();
-                row += deltaRow;
-                col += deltaCol;
+                row = start.getRow() + deltaRow;
+                col = start.getColumn() + deltaCol;
 
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     continue;
@@ -125,31 +119,13 @@ public class ChessPiece {
                 var piecePos = board.getPiece(pos);
                 if (piecePos == null) {
                     if (col == start.getColumn()) {
-                        if (row == 8 || row == 1) {
-                            for (var promo : PieceType.values()) {
-                                if (promo == PieceType.PAWN || promo == PieceType.KING) {
-                                    continue;
-                                }
-                                moves.add(new ChessMove(start, pos, promo));
-                            }
-                        } else {
-                            moves.add(new ChessMove(start, pos, null));
-                        }
+                        promotionRow(start, moves, row, pos);
                     } else {
                         continue;
                     }
                 }
                 if (col != start.getColumn() && piecePos != null && piecePos.getTeamColor() != piece.getTeamColor()) {
-                    if (row == 8 || row == 1) {
-                        for (var promo : PieceType.values()) {
-                            if (promo == PieceType.PAWN || promo == PieceType.KING) {
-                                continue;
-                            }
-                            moves.add(new ChessMove(start, pos, promo));
-                        }
-                    } else {
-                        moves.add(new ChessMove(start, pos, null));
-                    }
+                    promotionRow(start, moves, row, pos);
                 }
                 if (start.getRow() == 2 && piecePos == null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                     row += deltaRow;
@@ -172,6 +148,19 @@ public class ChessPiece {
             }
         }
         return moves;
+    }
+
+    private static void promotionRow(ChessPosition start, Collection<ChessMove> moves, int row, ChessPosition pos) {
+        if (row == 8 || row == 1) {
+            for (var promo : PieceType.values()) {
+                if (promo == PieceType.PAWN || promo == PieceType.KING) {
+                    continue;
+                }
+                moves.add(new ChessMove(start, pos, promo));
+            }
+        } else {
+            moves.add(new ChessMove(start, pos, null));
+        }
     }
 
     private static int[][] getInts(ChessPiece piece) {
