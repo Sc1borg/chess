@@ -9,5 +9,5 @@ public interface UserDAO {
 
     void createUser(RegisterRequest userData);
 
-    boolean matchPassword(String username, String password);
+    String readPassword(String username);
 }

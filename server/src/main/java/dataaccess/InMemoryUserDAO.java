@@ -23,9 +23,8 @@ public class InMemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public boolean matchPassword(String username, String password) {
-        System.out.println("In the userDAO");
-        return (USER_MAP.get(username).password().equals(password));
+    public String readPassword(String username) {
+        return USER_MAP.get(username).password();
     }
 
 
