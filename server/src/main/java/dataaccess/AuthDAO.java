@@ -1,7 +1,9 @@
 package dataaccess;
 
+import java.sql.SQLException;
+
 public interface AuthDAO {
-    void clear();
+    void clear() throws SQLException;
 
     boolean getAuth(String authToken);
 
