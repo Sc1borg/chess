@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static dataaccess.SQLUserDAO.sqlBoolean;
+
 public class SQLAuthDAO implements AuthDAO {
     @Override
     public void clear() throws SQLException, DataAccessException {
@@ -19,19 +21,12 @@ public class SQLAuthDAO implements AuthDAO {
     @Override
     public boolean getAuth(String authToken) throws DataAccessException {
         String sql = "SELECT 1 FROM auth WHERE authToken = ?";
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, authToken);
-            try (ResultSet resultSet = stmt.executeQuery()) {
-                return resultSet.next();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        return sqlBoolean(authToken, sql);
     }
 
     @Override
     public void saveAuth(String authToken, String username) throws DataAccessException {
-        String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?) ";
+        String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, authToken);
             stmt.setString(2, username);
