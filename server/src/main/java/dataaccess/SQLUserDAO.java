@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class SQLUserDAO implements UserDAO {
     @Override
     public void clear() throws DataAccessException {
-        String sql = "DELETE FROM user";
+        String sql = "DELETE FROM users";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -20,7 +20,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public boolean getUsername(String username) throws DataAccessException {
-        String sql = "SELECT 1 FROM user WHERE username = ?";
+        String sql = "SELECT 1 FROM users WHERE username = ?";
         return sqlBoolean(username, sql);
     }
 
@@ -37,7 +37,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void createUser(RegisterRequest userData) throws DataAccessException {
-        String sql = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userData.username());
             stmt.setString(2, userData.password());
@@ -50,10 +50,11 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public String readPassword(String username) throws DataAccessException {
-        String sql = "SELECT password from user WHERE username = ?";
+        String sql = "SELECT password from users WHERE username = ?";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             try (ResultSet resultSet = stmt.executeQuery()) {
+                resultSet.next();
                 return resultSet.getString("password");
             }
         } catch (SQLException e) {

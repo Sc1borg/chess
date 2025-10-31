@@ -9,7 +9,7 @@ import static dataaccess.SQLUserDAO.sqlBoolean;
 
 public class SQLAuthDAO implements AuthDAO {
     @Override
-    public void clear() throws SQLException, DataAccessException {
+    public void clear() throws DataAccessException {
         String sql = "DELETE FROM auth";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
@@ -53,6 +53,7 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, authToken);
             try (ResultSet resultSet = stmt.executeQuery()) {
+                resultSet.next();
                 return resultSet.getString("username");
             }
         } catch (SQLException e) {

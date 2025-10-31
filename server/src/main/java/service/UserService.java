@@ -7,13 +7,12 @@ import model.LoginResult;
 import model.RegisterRequest;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 public class UserService {
 
 
-    public void clear() throws SQLException, DataAccessException {
+    public void clear() throws DataAccessException {
         DatabaseRegistry.getUserDao().clear();
         DatabaseRegistry.getAuthDao().clear();
     }

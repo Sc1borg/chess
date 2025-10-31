@@ -9,8 +9,8 @@ public class SchemaManager {
     public static void initializeSchema() throws DataAccessException {
         String createUsersTable = "CREATE TABLE IF NOT EXISTS users (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "name VARCHAR(50), " +
-                "password VARCHAR(50), " +
+                "username VARCHAR(50), " +
+                "password VARCHAR(100), " +
                 "email VARCHAR(100))";
         String createAuthTable = "CREATE TABLE IF NOT EXISTS auth (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +

@@ -6,7 +6,7 @@ public class InMemoryAuthDAO implements AuthDAO {
     private final static HashMap<String, String> AUTH_DATA_MAP = new HashMap<>();
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         AUTH_DATA_MAP.clear();
     }
 
