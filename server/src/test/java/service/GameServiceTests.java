@@ -123,6 +123,6 @@ public class GameServiceTests {
 
         gameService.joinGame(joinGameRequest, loginResult.authToken());
 
-        assert gameService.getGames(loginResult.authToken()).contains(new GameData(gameID, "", loginResult.username(), "Urmom", new ChessGame()));
+        assert gameService.getGames(loginResult.authToken()).contains(new GameData(gameID, null, loginResult.username(), "Urmom", new ChessGame()));
     }
 }

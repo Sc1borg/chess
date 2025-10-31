@@ -59,7 +59,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public boolean getGame(int gameID) throws DataAccessException {
-        String sql = "SELECT 1 FROM Game WHERE gameID = ?";
+        String sql = "SELECT 1 FROM game WHERE gameID = ?";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, gameID);
             try (ResultSet resultSet = stmt.executeQuery()) {
@@ -71,7 +71,31 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public boolean joinGame(int gameID, String playerColor, String username) {
-        return false;
+    public boolean joinGame(int gameID, String playerColor, String username) throws DataAccessException {
+        String sql = "SELECT * FROM game WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, gameID);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                resultSet.next();
+                if (playerColor.equals("BLACK") && resultSet.getString("blackUsername") == null) {
+                    try (PreparedStatement stmt1 = conn.prepareStatement("UPDATE game SET blackUsername =? WHERE gameID = ?")) {
+                        stmt1.setString(1, username);
+                        stmt1.setInt(2, gameID);
+                        stmt1.executeUpdate();
+                    }
+                } else if (playerColor.equals("WHITE") && resultSet.getString("whiteUsername") == null) {
+                    try (PreparedStatement stmt2 = conn.prepareStatement("UPDATE game SET whiteUsername =? WHERE gameID = ?")) {
+                        stmt2.setString(1, username);
+                        stmt2.setInt(2, gameID);
+                        stmt2.executeUpdate();
+                    }
+                } else {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return true;
     }
 }

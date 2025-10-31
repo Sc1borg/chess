@@ -13,5 +13,5 @@ public interface GameDAO {
 
     boolean getGame(int gameID) throws DataAccessException;
 
-    boolean joinGame(int gameID, String playerColor, String username);
+    boolean joinGame(int gameID, String playerColor, String username) throws DataAccessException;
 }
