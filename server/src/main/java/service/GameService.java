@@ -13,7 +13,7 @@ import java.util.Objects;
 public class GameService {
     UserService userService = new UserService();
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         DatabaseRegistry.getGameDao().clear();
     }
 
@@ -36,7 +36,7 @@ public class GameService {
         throw new DataAccessException("Error: unauthorized");
     }
 
-    private int createGameID() {
+    private int createGameID() throws DataAccessException {
         int gameID = 12345;
         while (DatabaseRegistry.getGameDao().getGame(gameID)) {
             gameID += 1;

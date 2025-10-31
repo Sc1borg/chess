@@ -3,7 +3,7 @@ package dataaccess;
 public class DatabaseRegistry {
     private static final AuthDAO AUTH_DAO = new SQLAuthDAO();
     private static final UserDAO USER_DAO = new SQLUserDAO();
-    private static final GameDAO GAME_DAO = new InMemoryGameDAO();
+    private static final GameDAO GAME_DAO = new SQLGameDAO();
 
     public static GameDAO getGameDao() {
         return GAME_DAO;

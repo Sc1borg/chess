@@ -30,7 +30,7 @@ public class GameServiceTests {
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
         int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
 
-        assert gameID == 0;
+        assert gameID == 12345;
     }
 
     @Test
