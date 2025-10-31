@@ -6,6 +6,7 @@ import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,7 +17,7 @@ public class GameServiceTests {
     UserService userService = new UserService();
 
     @BeforeEach
-    void clear() {
+    void clear() throws SQLException, DataAccessException {
         gameService.clear();
         userService.clear();
     }

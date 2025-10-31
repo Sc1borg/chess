@@ -7,12 +7,13 @@ import model.LoginResult;
 import model.RegisterRequest;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class UserService {
 
 
-    public void clear() {
+    public void clear() throws SQLException, DataAccessException {
         DatabaseRegistry.getUserDao().clear();
         DatabaseRegistry.getAuthDao().clear();
     }
@@ -51,7 +52,7 @@ public class UserService {
         invalidateToken(authToken);
     }
 
-    private String generateAuthToken(String username) {
+    private String generateAuthToken(String username) throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
         DatabaseRegistry.getAuthDao().saveAuth(authToken, username);
         return authToken;
@@ -65,11 +66,11 @@ public class UserService {
         throw new DataAccessException("Error: unauthorized");
     }
 
-    public boolean getAuth(String authToken) {
+    public boolean getAuth(String authToken) throws DataAccessException {
         return DatabaseRegistry.getAuthDao().getAuth(authToken);
     }
 
-    public String getUsername(String authToken) {
+    public String getUsername(String authToken) throws DataAccessException {
         return DatabaseRegistry.getAuthDao().getUsername(authToken);
     }
 }

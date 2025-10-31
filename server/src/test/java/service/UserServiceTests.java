@@ -8,6 +8,8 @@ import model.RegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTests {
@@ -15,7 +17,7 @@ class UserServiceTests {
     private final UserService userService = new UserService();
 
     @BeforeEach
-    void clear() {
+    void clear() throws SQLException, DataAccessException {
         userService.clear();
     }
 
