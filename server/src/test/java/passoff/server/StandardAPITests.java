@@ -6,7 +6,9 @@ import passoff.model.*;
 import server.Server;
 
 import java.net.HttpURLConnection;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Locale;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StandardAPITests {
@@ -77,8 +79,8 @@ public class StandardAPITests {
     @DisplayName("Login Bad Request")
     public void loginBadRequest() {
         TestUser[] incompleteLoginRequests = {
-            new TestUser(null, existingUser.getPassword()),
-            new TestUser(existingUser.getUsername(), null),
+                new TestUser(null, existingUser.getPassword()),
+                new TestUser(existingUser.getUsername(), null),
         };
 
         for (TestUser incompleteLoginRequest : incompleteLoginRequests) {
@@ -93,7 +95,7 @@ public class StandardAPITests {
     @Order(3)
     @DisplayName("Login Unauthorized (Multiple Forms)")
     public void loginUnauthorized() {
-        TestUser[] unauthorizedLoginRequests = { newUser, new TestUser(existingUser.getUsername(), "BAD!PASSWORD") };
+        TestUser[] unauthorizedLoginRequests = {newUser, new TestUser(existingUser.getUsername(), "BAD!PASSWORD")};
 
         for (TestUser unauthorizedLoginRequest : unauthorizedLoginRequests) {
             TestAuthResult loginResult = serverFacade.login(unauthorizedLoginRequest);
@@ -243,7 +245,7 @@ public class StandardAPITests {
         int gameID = createResult.getGameID();
 
         //If you use deserialize to the TeamColor enum instead of a String each of these will be read as null
-        for(String color : new String[]{null, "", "GREEN"}) {
+        for (String color : new String[]{null, "", "GREEN"}) {
             assertHttpBadRequest(serverFacade.joinPlayer(new TestJoinRequest(color, gameID), existingAuth));
         }
     }
@@ -301,9 +303,9 @@ public class StandardAPITests {
     @DisplayName("List Multiple Games")
     public void listGamesSuccess() {
         //register a few users to create games
-        TestUser userA = new TestUser("a", "A", "a.A");
-        TestUser userB = new TestUser("b", "B", "b.B");
-        TestUser userC = new TestUser("c", "C", "c.C");
+        TestUser userA = new TestUser("a", "A", "a@mail.com");
+        TestUser userB = new TestUser("b", "B", "b@mail.com");
+        TestUser userC = new TestUser("c", "C", "c@mail.com");
 
         TestAuthResult authA = serverFacade.register(userA);
         TestAuthResult authB = serverFacade.register(userB);

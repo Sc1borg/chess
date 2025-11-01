@@ -7,8 +7,8 @@ import server.Server;
 
 import java.lang.reflect.Method;
 import java.sql.*;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -116,24 +116,26 @@ public class DatabaseTests {
         Object obj = databaseManagerClass.getDeclaredConstructor().newInstance();
         loadPropertiesMethod.invoke(obj, fakeDbProperties);
 
-        List<Supplier<TestResult>> operations = List.of(
-                () -> serverFacade.clear(),
-                () -> serverFacade.register(TEST_USER),
-                () -> serverFacade.login(TEST_USER),
-                () -> serverFacade.logout(UUID.randomUUID().toString()),
-                () -> serverFacade.createGame(new TestCreateRequest("inaccessible"), UUID.randomUUID().toString()),
-                () -> serverFacade.listGames(UUID.randomUUID().toString()),
-                () -> serverFacade.joinPlayer(new TestJoinRequest(ChessGame.TeamColor.WHITE, 1), UUID.randomUUID().toString())
+        Map<String, Supplier<TestResult>> operations = Map.of(
+                "Clear", () -> serverFacade.clear(),
+                "Register", () -> serverFacade.register(TEST_USER),
+                "Login", () -> serverFacade.login(TEST_USER),
+                "Logout", () -> serverFacade.logout(UUID.randomUUID().toString()),
+                "Create Game", () -> serverFacade.createGame(new TestCreateRequest("inaccessible"), UUID.randomUUID().toString()),
+                "List Games", () -> serverFacade.listGames(UUID.randomUUID().toString()),
+                "Join Game", () -> serverFacade.joinPlayer(new TestJoinRequest(ChessGame.TeamColor.WHITE, 1), UUID.randomUUID().toString())
         );
 
         try {
-            for (Supplier<TestResult> operation : operations) {
+            for (Map.Entry<String, Supplier<TestResult>> operationEntry : operations.entrySet()) {
+                String operationName = operationEntry.getKey();
+                Supplier<TestResult> operation = operationEntry.getValue();
                 TestResult result = operation.get();
                 Assertions.assertEquals(500, serverFacade.getStatusCode(),
-                        "Server response code was not 500 Internal Error");
-                Assertions.assertNotNull(result.getMessage(), "Invalid Request didn't return an error message");
+                        "Server response code was not 500 Internal Error for " + operationName);
+                Assertions.assertNotNull(result.getMessage(), "Invalid Request didn't return an error message for " + operationName);
                 Assertions.assertTrue(result.getMessage().toLowerCase(Locale.ROOT).contains("error"),
-                        "Error message didn't contain the word \"Error\"");
+                        "Error message didn't contain the word \"Error\" for " + operationName);
             }
         } finally {
             Method loadFromResources = databaseManagerClass.getDeclaredMethod("loadPropertiesFromResources");
