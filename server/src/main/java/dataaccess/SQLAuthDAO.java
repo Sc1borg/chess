@@ -43,7 +43,7 @@ public class SQLAuthDAO implements AuthDAO {
             stmt.setString(1, authToken);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException("Error:" + e.getMessage());
         }
     }
 

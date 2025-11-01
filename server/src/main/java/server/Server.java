@@ -25,9 +25,14 @@ public class Server {
 
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", ctx -> {
-            userService.clear();
-            gameService.clear();
-            ctx.status(200);
+            try {
+                userService.clear();
+                gameService.clear();
+                ctx.status(200);
+            } catch (DataAccessException e) {
+                String myResult = serializeE(e.getMessage());
+                ctx.status(500).json(myResult);
+            }
         });
 
 
@@ -44,6 +49,9 @@ public class Server {
                 } else if (e.getMessage().equals("Error: bad request")) {
                     String myResult = serializeE(e.getMessage());
                     ctx.status(400).json(myResult);
+                } else {
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(500).json(myResult);
                 }
             }
         });
@@ -62,6 +70,9 @@ public class Server {
                 } else if (e.getMessage().equals("Error: bad request")) {
                     String myResult = serializeE(e.getMessage());
                     ctx.status(400).result(myResult);
+                } else {
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(500).json(myResult);
                 }
             }
         });
@@ -75,6 +86,9 @@ public class Server {
                 if (e.getMessage().equals("Error: unauthorized")) {
                     String myResult = serializeE(e.getMessage());
                     ctx.status(401).json(myResult);
+                } else {
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(500).json(myResult);
                 }
             }
         });
@@ -92,6 +106,9 @@ public class Server {
                 if (e.getMessage().equals("Error: unauthorized")) {
                     String myResult = serializeE(e.getMessage());
                     ctx.status(401).json(myResult);
+                } else {
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(500).json(myResult);
                 }
             }
         });
@@ -118,6 +135,9 @@ public class Server {
             } else if (e.getMessage().equals("Error: bad request")) {
                 String myResult = serializeE(e.getMessage());
                 ctx.status(400).json(myResult);
+            } else {
+                String myResult = serializeE(e.getMessage());
+                ctx.status(500).json(myResult);
             }
         }
     }
@@ -143,6 +163,10 @@ public class Server {
                 case "Error: bad request" -> {
                     String myResult = serializeE(e.getMessage());
                     ctx.status(400).json(myResult);
+                }
+                default -> {
+                    String myResult = serializeE(e.getMessage());
+                    ctx.status(500).json(myResult);
                 }
             }
         }
