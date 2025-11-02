@@ -50,7 +50,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public String readPassword(String username) throws DataAccessException {
-        String sql = "SELECT password from users WHERE username = ?";
+        String sql = "SELECT password FROM users WHERE username = ?";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             try (ResultSet resultSet = stmt.executeQuery()) {

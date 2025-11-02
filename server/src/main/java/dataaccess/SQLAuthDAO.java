@@ -49,7 +49,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public String getUsername(String authToken) throws DataAccessException {
-        String sql = "SELECT username FROM auth where authToken = ?";
+        String sql = "SELECT username FROM auth WHERE authToken = ?";
         try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, authToken);
             try (ResultSet resultSet = stmt.executeQuery()) {
