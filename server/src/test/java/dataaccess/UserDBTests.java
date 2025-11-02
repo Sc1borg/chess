@@ -8,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserDBTests {
@@ -19,7 +17,7 @@ class UserDBTests {
     private final AuthDAO authDAO = new SQLAuthDAO();
 
     @BeforeEach
-    void clear() throws SQLException, DataAccessException {
+    void clear() throws DataAccessException {
         userDAO.clear();
         authDAO.clear();
     }

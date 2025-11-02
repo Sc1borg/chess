@@ -32,6 +32,7 @@ public class GameDBTests {
         int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
 
         assert gameID == 12345;
+        assert gameDAO.getGame(12345);
     }
 
     @Test
