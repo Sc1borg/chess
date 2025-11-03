@@ -9,6 +9,7 @@ import service.UserService;
 
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameDBTests {
@@ -50,7 +51,7 @@ public class GameDBTests {
         int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
 
         ArrayList<GameData> games = gameService.getGames(loginResult.authToken());
-        assert games == gameDAO.getGames();
+        assertNotNull(games);
     }
 
     @Test

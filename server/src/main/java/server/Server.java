@@ -2,9 +2,13 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
+import dataaccess.SchemaManager;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.GameService;
 import service.UserService;
 
@@ -19,9 +23,16 @@ public class Server {
     private final Gson gson = new Gson();
     private final GameService gameService = new GameService();
     private final UserService userService = new UserService();
+    private static final Logger log = LoggerFactory.getLogger(Server.class);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        try {
+            DatabaseManager.createDatabase();
+            SchemaManager.initializeSchema();
+        } catch (DataAccessException ex) {
+            log.error("e: ", ex);
+        }
 
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", ctx -> {
