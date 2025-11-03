@@ -94,11 +94,10 @@ public class Server {
                 userService.logout(auth);
                 ctx.status(200);
             } catch (DataAccessException e) {
+                String myResult = serializeE(e.getMessage());
                 if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = serializeE(e.getMessage());
                     ctx.status(401).json(myResult);
                 } else {
-                    String myResult = serializeE(e.getMessage());
                     ctx.status(500).json(myResult);
                 }
             }
