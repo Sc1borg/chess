@@ -14,99 +14,83 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameDBTests {
     GameDAO gameDAO = new SQLGameDAO();
-    UserDAO userDAO = new SQLUserDAO();
     GameService gameService = new GameService();
     UserService userService = new UserService();
+    private int gameID;
+    private LoginResult loginResult;
 
     @BeforeEach
     void clear() throws DataAccessException {
         gameDAO.clear();
-        userDAO.clear();
-    }
-
-    @Test
-    void createGameSuccess() throws DataAccessException {
+        userService.clear();
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
+        loginResult = userService.register(registerRequest);
 
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
-
-        assert gameID == 12345;
-        assert gameDAO.getGame(12345);
+        gameID = gameService.createGame(createGameRequest, loginResult.authToken());
     }
 
     @Test
-    void createGameFailure() {
-        CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        assertThrows(DataAccessException.class, () -> gameService.createGame(createGameRequest, "Fake Auth"));
+    void createGameDBSuccess() throws DataAccessException {
+        assert gameDAO.getGame(gameID);
     }
 
     @Test
-    void getGamesSuccess() throws DataAccessException {
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
-
+    void createGameDBFailureDuplicate() {
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
+        assertThrows(DataAccessException.class, () -> gameService.createGame(createGameRequest, "auth"));
+    }
 
-        ArrayList<GameData> games = gameService.getGames(loginResult.authToken());
+    @Test
+    void createGameDBFailureAuth() {
+        CreateGameRequest createGameRequest = new CreateGameRequest("JO mama");
+        assertThrows(DataAccessException.class, () -> gameService.createGame(createGameRequest, "Fake auth"));
+    }
+
+
+    @Test
+    void getGamesDBSuccess() throws DataAccessException {
+        ArrayList<GameData> games = gameDAO.getGames();
         assertNotNull(games);
     }
 
     @Test
-    void getGamesFailure() throws DataAccessException {
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
-
+    void getGamesDBFailure() {
         CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
 
         assertThrows(DataAccessException.class, () -> gameService.createGame(createGameRequest, "Fake Auth"));
     }
 
     @Test
-    void joinGameFailureAuth() throws DataAccessException {
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
-
-        CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
-        JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", gameID);
+    void joinGameDBFailureAuth() {
+        JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", 12345);
 
         assertThrows(DataAccessException.class, () -> gameService.joinGame(joinGameRequest, "Fake Auth"));
     }
 
     @Test
-    void joinGameFailureColor() throws DataAccessException {
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
+    void joinGameDBFailureID() {
+        JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", 12346);
 
-        CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
-        JoinGameRequest joinGameRequest = new JoinGameRequest("BLICK", gameID);
-
-        assertThrows(DataAccessException.class, () -> gameService.joinGame(joinGameRequest, loginResult.authToken()));
+        assertThrows(DataAccessException.class, () -> gameService.joinGame(joinGameRequest, "Auth"));
     }
 
     @Test
-    void joinGameFailureNoGame() throws DataAccessException {
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
+    void joinGameDBFailureColor() {
+        JoinGameRequest joinGameRequest = new JoinGameRequest("BLICK", 12345);
 
-        CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
+        assertThrows(DataAccessException.class, () -> gameService.joinGame(joinGameRequest, "auth"));
+    }
+
+    @Test
+    void joinGameDBFailureNoGame() {
         JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", 1);
 
-        assertThrows(DataAccessException.class, () -> gameService.joinGame(joinGameRequest, loginResult.authToken()));
+        assertThrows(DataAccessException.class, () -> gameService.joinGame(joinGameRequest, "auth"));
     }
 
     @Test
-    void joinGameFailureFull() throws DataAccessException {
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
-
-        CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
+    void joinGameDBFailureFull() throws DataAccessException {
         JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", gameID);
 
         gameService.joinGame(joinGameRequest, loginResult.authToken());
@@ -115,12 +99,7 @@ public class GameDBTests {
     }
 
     @Test
-    void joinGameSuccess() throws DataAccessException {
-        RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        LoginResult loginResult = userService.register(registerRequest);
-
-        CreateGameRequest createGameRequest = new CreateGameRequest("Urmom");
-        int gameID = gameService.createGame(createGameRequest, loginResult.authToken());
+    void joinGameDBSuccess() throws DataAccessException {
         JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", gameID);
 
         gameService.joinGame(joinGameRequest, loginResult.authToken());

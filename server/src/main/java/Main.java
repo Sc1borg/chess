@@ -6,14 +6,14 @@ import org.slf4j.LoggerFactory;
 import server.Server;
 
 public class Main {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         try {
             DatabaseManager.createDatabase();
             SchemaManager.initializeSchema();
         } catch (DataAccessException ex) {
-            log.error("e: ", ex);
+            LOGGER.error("e: ", ex);
         }
         Server server = new Server();
         server.run(8080);

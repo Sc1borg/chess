@@ -23,7 +23,7 @@ public class Server {
     private final Gson gson = new Gson();
     private final GameService gameService = new GameService();
     private final UserService userService = new UserService();
-    private static final Logger log = LoggerFactory.getLogger(Server.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -31,7 +31,7 @@ public class Server {
             DatabaseManager.createDatabase();
             SchemaManager.initializeSchema();
         } catch (DataAccessException ex) {
-            log.error("e: ", ex);
+            LOGGER.error("e: ", ex);
         }
 
         // Register your endpoints and exception handlers here.
@@ -105,28 +105,30 @@ public class Server {
         });
 
 
-        javalin.get("/game", ctx -> {
-            try {
-                String auth = ctx.header("authorization");
-                ArrayList<GameData> games = gameService.getGames(auth);
-                Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("games", games);
-                String myResult = gson.toJson(responseMap);
-                ctx.status(200).result(myResult).contentType("application/json");
-            } catch (DataAccessException e) {
-                if (e.getMessage().equals("Error: unauthorized")) {
-                    String myResult = serializeE(e.getMessage());
-                    ctx.status(401).json(myResult);
-                } else {
-                    String myResult = serializeE(e.getMessage());
-                    ctx.status(500).json(myResult);
-                }
-            }
-        });
+        javalin.get("/game", this::listGames);
 
         javalin.post("/game", this::createGame);
 
         javalin.put("/game", this::joinGame);
+    }
+
+    private void listGames(Context ctx) {
+        try {
+            String auth = ctx.header("authorization");
+            ArrayList<GameData> games = gameService.getGames(auth);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("games", games);
+            String myResult = gson.toJson(responseMap);
+            ctx.status(200).result(myResult).contentType("application/json");
+        } catch (DataAccessException e) {
+            if (e.getMessage().equals("Error: unauthorized")) {
+                String myResult = serializeE(e.getMessage());
+                ctx.status(401).json(myResult);
+            } else {
+                String myResult = serializeE(e.getMessage());
+                ctx.status(500).json(myResult);
+            }
+        }
     }
 
     private void createGame(Context ctx) {
