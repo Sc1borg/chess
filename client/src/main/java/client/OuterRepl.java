@@ -1,5 +1,10 @@
 package client;
 
+import com.google.gson.Gson;
+import model.LoginRequest;
+import model.RegisterRequest;
+import server.ServerFacade;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -7,8 +12,11 @@ import static ui.EscapeSequences.SET_BG_COLOR_DARK_GREEN;
 import static ui.EscapeSequences.SET_BG_COLOR_GREEN;
 
 public class OuterRepl {
+    private final ServerFacade server;
+    private final Gson gson = new Gson();
 
     public OuterRepl(String serverUrl) {
+        server = new ServerFacade(serverUrl);
     }
 
     public void run() {
@@ -51,11 +59,21 @@ public class OuterRepl {
     }
 
     public String login(String[] params) {
+        if (params.length != 2) {
+            return "Invalid login info";
+        }
+        LoginRequest user = new LoginRequest(params[0], params[1]);
+        server.login(user);
         return "";
     }
 
     public String register(String[] params) {
-        server.register(params[0], params[1], params[2]);
+        if (params.length != 3) {
+            return "Invalid registration info";
+        }
+        RegisterRequest user = new RegisterRequest(params[0], params[1], params[2]);
+
+        server.register(user);
         return "";
     }
 
