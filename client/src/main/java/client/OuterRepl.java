@@ -1,6 +1,5 @@
 package client;
 
-import com.google.gson.Gson;
 import model.LoginRequest;
 import model.LoginResult;
 import model.RegisterRequest;
@@ -13,7 +12,6 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
 public class OuterRepl {
     private final ServerFacade server;
-    private final Gson gson = new Gson();
 
     public OuterRepl(String serverUrl) {
         server = new ServerFacade(serverUrl);

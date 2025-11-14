@@ -1,5 +1,7 @@
 package client;
 
+import model.CreateGameRequest;
+import model.JoinGameRequest;
 import model.LoginResult;
 import server.ServerFacade;
 
@@ -61,7 +63,8 @@ public class middleRepl {
             return "Invalid game info";
         }
         try {
-            server.create(params[0]);
+            CreateGameRequest createGameRequest = new CreateGameRequest(params[0]);
+            server.create(createGameRequest, user);
         } catch (Exception ex) {
             return ex.getMessage();
         }
@@ -70,7 +73,7 @@ public class middleRepl {
 
     private String list() {
         try {
-            server.list();
+            server.list(user);
         } catch (Exception ex) {
             return ex.getMessage();
         }
@@ -82,7 +85,8 @@ public class middleRepl {
             return "Invalid arguments";
         }
         try {
-            server.join(params[0], params[1]);
+            JoinGameRequest joinReq = new JoinGameRequest(params[1].toUpperCase(), Integer.parseInt(params[0]));
+            server.join(joinReq, user);
         } catch (Exception ex) {
             return ex.getMessage();
         }
@@ -98,7 +102,7 @@ public class middleRepl {
 
     private String logout() {
         try {
-            server.logout();
+            server.logout(user);
         } catch (Exception ex) {
             return ex.getMessage();
         }

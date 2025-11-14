@@ -2,9 +2,7 @@ package server;
 
 
 import com.google.gson.Gson;
-import model.LoginRequest;
-import model.LoginResult;
-import model.RegisterRequest;
+import model.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,44 +19,58 @@ public class ServerFacade {
 
 
     public LoginResult register(RegisterRequest user) throws Exception {
-        var request = buildRequest("POST", "/user", user);
+        var request = buildRequest("POST", "/user", user, null);
         var response = sendRequest(request);
         return handleResponse(response, LoginResult.class);
     }
 
     public LoginResult login(LoginRequest user) throws Exception {
-        var request = buildRequest("POST", "/session", user);
+        var request = buildRequest("POST", "/session", user, null);
         var response = sendRequest(request);
         return handleResponse(response, LoginResult.class);
     }
 
-    public void create(String gameName) throws Exception {
-        var request = buildRequest("POST", "/game", gameName);
+    public void create(CreateGameRequest gameReq, LoginResult user) throws Exception {
+        var request = buildRequest("POST", "/game", gameReq, user.authToken());
         var response = sendRequest(request);
+        if (!checkResponse(response)) {
+            throw new Exception("Failed to create game");
+        }
     }
 
-    public void list() throws Exception {
-        var request = buildRequest("GET", "/game", null);
+    public void list(LoginResult user) throws Exception {
+        var request = buildRequest("GET", "/game", null, user.authToken());
         var response = sendRequest(request);
-//        return handleResponse(response, )
+        if (!checkResponse(response)) {
+            throw new Exception("Failed to logout");
+        }
     }
 
-    public void join(String ID, String color) throws Exception {
-        var request = buildRequest("PUT", "/game", null);
+    public void join(JoinGameRequest joinReq, LoginResult user) throws Exception {
+        var request = buildRequest("PUT", "/game", joinReq, user.authToken());
         var response = sendRequest(request);
+        if (!checkResponse(response)) {
+            throw new Exception("Failed to join game");
+        }
     }
 
-    public void logout() throws Exception {
-        var request = buildRequest("GET", "/game", null);
+    public void logout(LoginResult user) throws Exception {
+        var request = buildRequest("GET", "/game", null, user.authToken());
         var response = sendRequest(request);
+        if (!checkResponse(response)) {
+            throw new Exception("Failed to logout");
+        }
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        }
+        if (authToken != null) {
+            request.setHeader("Authorization", authToken);
         }
         return request.build();
     }
@@ -94,6 +106,11 @@ public class ServerFacade {
         }
 
         return null;
+    }
+
+    private boolean checkResponse(HttpResponse<String> response) throws Exception {
+        var status = response.statusCode();
+        return isSuccessful(status);
     }
 
     private boolean isSuccessful(int status) {
