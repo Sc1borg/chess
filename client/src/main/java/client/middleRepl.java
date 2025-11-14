@@ -1,11 +1,15 @@
 package client;
 
+import com.google.gson.Gson;
 import model.CreateGameRequest;
+import model.GameData;
 import model.JoinGameRequest;
 import model.LoginResult;
 import server.ServerFacade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
@@ -50,12 +54,17 @@ public class middleRepl {
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
-                case "quit" -> "quit";
+                case "quit" -> quit();
                 default -> help();
             };
         } catch (Throwable ex) {
             return ex.getMessage();
         }
+    }
+
+    private String quit() {
+        System.exit(0);
+        return "This should never be output";
     }
 
     private String create(String[] params) {
@@ -72,12 +81,22 @@ public class middleRepl {
     }
 
     private String list() {
+        Map<String, ArrayList> myMap;
+        ArrayList games;
+        StringBuilder gameList = new StringBuilder();
         try {
-            server.list(user);
+            myMap = server.list(user);
+            games = myMap.get("games");
         } catch (Exception ex) {
             return ex.getMessage();
         }
-        return "";
+        int counter = 0;
+        for (var game : games) {
+            var realGame = new Gson().fromJson(game.toString(), GameData.class);
+            counter++;
+            gameList.append(" ").append(counter).append(" Name: ").append(realGame.gameName()).append(" White: ").append(realGame.whiteUsername()).append(" Black: ").append(realGame.blackUsername()).append("\n");
+        }
+        return gameList.toString();
     }
 
     private String join(String[] params) {

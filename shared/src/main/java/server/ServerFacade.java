@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -38,12 +40,10 @@ public class ServerFacade {
         }
     }
 
-    public void list(LoginResult user) throws Exception {
+    public Map<String, ArrayList> list(LoginResult user) throws Exception {
         var request = buildRequest("GET", "/game", null, user.authToken());
         var response = sendRequest(request);
-        if (!checkResponse(response)) {
-            throw new Exception("Failed to logout");
-        }
+        return handleResponse(response, Map.class);
     }
 
     public void join(JoinGameRequest joinReq, LoginResult user) throws Exception {
