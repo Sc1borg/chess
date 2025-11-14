@@ -2,14 +2,14 @@ package client;
 
 import com.google.gson.Gson;
 import model.LoginRequest;
+import model.LoginResult;
 import model.RegisterRequest;
 import server.ServerFacade;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
-import static ui.EscapeSequences.SET_BG_COLOR_DARK_GREEN;
-import static ui.EscapeSequences.SET_BG_COLOR_GREEN;
+import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
 public class OuterRepl {
     private final ServerFacade server;
@@ -25,20 +25,16 @@ public class OuterRepl {
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
-            printNew();
+            shared.printNew();
             String line = scanner.nextLine();
 
             try {
                 result = eval(line);
-                System.out.print(SET_BG_COLOR_DARK_GREEN + result);
+                System.out.print(SET_TEXT_COLOR_GREEN + result);
             } catch (Throwable e) {
                 System.out.print(e.getMessage());
             }
         }
-    }
-
-    private void printNew() {
-        System.out.print("\n" + ">>>" + SET_BG_COLOR_GREEN);
     }
 
     private String eval(String input) {
@@ -63,7 +59,12 @@ public class OuterRepl {
             return "Invalid login info";
         }
         LoginRequest user = new LoginRequest(params[0], params[1]);
-        server.login(user);
+        try {
+            LoginResult loginResult = server.login(user);
+            new middleRepl(server, loginResult).run();
+        } catch (Exception ex) {
+            return "Failed to login" + ex.getMessage();
+        }
         return "";
     }
 
@@ -73,7 +74,12 @@ public class OuterRepl {
         }
         RegisterRequest user = new RegisterRequest(params[0], params[1], params[2]);
 
-        server.register(user);
+        try {
+            LoginResult loginResult = server.register(user);
+            new middleRepl(server, loginResult).run();
+        } catch (Exception ex) {
+            return "Failed to register" + ex.getMessage();
+        }
         return "";
     }
 
