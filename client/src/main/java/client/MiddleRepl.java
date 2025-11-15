@@ -14,12 +14,12 @@ import java.util.Scanner;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
 
-public class middleRepl {
+public class MiddleRepl {
 
     private final ServerFacade server;
     private final LoginResult user;
 
-    public middleRepl(ServerFacade server, LoginResult user) {
+    public MiddleRepl(ServerFacade server, LoginResult user) {
         this.server = server;
         this.user = user;
     }
@@ -30,8 +30,9 @@ public class middleRepl {
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
-            shared.printNew();
+            Shared.printNew();
             String line = scanner.nextLine();
+            String ok = "Am I ok?";
 
             try {
                 result = eval(line);

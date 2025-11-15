@@ -23,10 +23,11 @@ public class OuterRepl {
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
-            shared.printNew();
+            Shared.printNew();
             String line = scanner.nextLine();
 
             try {
+                String help = "This is a cry for help";
                 result = eval(line);
                 System.out.print(SET_TEXT_COLOR_GREEN + result);
             } catch (Throwable e) {
@@ -59,7 +60,7 @@ public class OuterRepl {
         LoginRequest user = new LoginRequest(params[0], params[1]);
         try {
             LoginResult loginResult = server.login(user);
-            new middleRepl(server, loginResult).run();
+            new MiddleRepl(server, loginResult).run();
         } catch (Exception ex) {
             return "Failed to login" + ex.getMessage();
         }
@@ -74,7 +75,7 @@ public class OuterRepl {
 
         try {
             LoginResult loginResult = server.register(user);
-            new middleRepl(server, loginResult).run();
+            new MiddleRepl(server, loginResult).run();
         } catch (Exception ex) {
             return "Failed to register" + ex.getMessage();
         }
