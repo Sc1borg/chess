@@ -4,7 +4,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import org.junit.jupiter.api.Test;
 import ui.EscapeSequences;
 
 public class PrintBoard {
@@ -40,12 +39,5 @@ public class PrintBoard {
             counter += (perspEnum == ChessGame.TeamColor.WHITE) ? -1 : 1;
         }
         System.out.print(borderTop);
-    }
-
-    @Test
-    void callBoard() {
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        printDaBoard(board, "WHITE");
     }
 }

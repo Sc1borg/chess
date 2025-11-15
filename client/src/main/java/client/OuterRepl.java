@@ -63,7 +63,7 @@ public class OuterRepl {
         } catch (Exception ex) {
             return "Failed to login" + ex.getMessage();
         }
-        return "";
+        return "\r\n" + user.username() + " has been logged out";
     }
 
     public String register(String[] params) {
@@ -78,7 +78,7 @@ public class OuterRepl {
         } catch (Exception ex) {
             return "Failed to register" + ex.getMessage();
         }
-        return "";
+        return "\r\n" + user.username() + " has been logged out";
     }
 
     public String help() {
