@@ -94,7 +94,9 @@ public class middleRepl {
         for (var game : games) {
             var realGame = new Gson().fromJson(game.toString(), GameData.class);
             counter++;
-            gameList.append(" ").append(counter).append(" Name: ").append(realGame.gameName()).append(" White: ").append(realGame.whiteUsername()).append(" Black: ").append(realGame.blackUsername()).append("\n");
+            gameList.append(" ").append(counter).append(" Name: ").append(realGame.gameName()).append(" White: ")
+                    .append(realGame.whiteUsername()).append(" Black: ")
+                    .append(realGame.blackUsername()).append("\n");
         }
         return gameList.toString();
     }
@@ -104,17 +106,30 @@ public class middleRepl {
             return "Invalid arguments";
         }
         try {
-            JoinGameRequest joinReq = new JoinGameRequest(params[1].toUpperCase(), Integer.parseInt(params[0]));
+            Map<String, ArrayList> gamesMap = server.list(user);
+            ArrayList games = gamesMap.get("games");
+            model.GameData game = new Gson().fromJson(games.get(Integer.parseInt(params[0]) - 1).toString(), GameData.class);
+            int id = game.gameID();
+            JoinGameRequest joinReq = new JoinGameRequest(params[1].toUpperCase(), id);
             server.join(joinReq, user);
+            PrintBoard.printDaBoard(game.game().getBoard(), params[1]);
         } catch (Exception ex) {
             return ex.getMessage();
         }
-        return "successfully joined game";
+        return "";
     }
 
     private String observe(String[] params) {
         if (params.length != 1) {
             return "Invalid arguments";
+        }
+        try {
+            Map<String, ArrayList> gamesMap = server.list(user);
+            ArrayList games = gamesMap.get("games");
+            model.GameData game = new Gson().fromJson(games.get(Integer.parseInt(params[0]) - 1).toString(), GameData.class);
+            PrintBoard.printDaBoard(game.game().getBoard(), "white");
+        } catch (Exception e) {
+            return e.getMessage();
         }
         return "";
     }
@@ -132,7 +147,7 @@ public class middleRepl {
         return """
                 create <NAME> - a game
                 list - games
-                join <ID> - a game
+                join <ID> [white]|[black] - a game
                 observe <ID> - a game
                 logout - when you are done
                 quit - playing chess
