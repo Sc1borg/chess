@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFacade {
@@ -95,6 +96,8 @@ public class ServerFacade {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
+            HashMap<String, String> msgMap = new Gson().fromJson(body, HashMap.class);
+            String msg = msgMap.get("message");
             if (body != null) {
                 throw new Exception(body);
             }
