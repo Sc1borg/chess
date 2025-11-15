@@ -26,7 +26,9 @@ public class PrintBoard {
                 ChessPosition pos = new ChessPosition(y + 1, x + 1);
                 ChessPiece piecePos = board.getPiece(pos);
                 String piece = piecePos == null ? " " : piecePos.toString();
-                String textColor = piecePos == null ? "" : piecePos.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.SET_TEXT_COLOR_BLUE : EscapeSequences.SET_TEXT_COLOR_RED;
+                String textColor = piecePos == null ? "" :
+                        piecePos.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.SET_TEXT_COLOR_BLUE :
+                                EscapeSequences.SET_TEXT_COLOR_RED;
                 System.out.print(textColor);
                 System.out.print(piece);
                 System.out.print(" ");
