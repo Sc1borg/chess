@@ -4,26 +4,31 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import org.junit.jupiter.api.Test;
 import ui.EscapeSequences;
 
 public class PrintBoard {
     public static void printDaBoard(ChessBoard board, String persp) {
         chess.ChessGame.TeamColor perspEnum = persp.equalsIgnoreCase("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-        String borderTop = "     A  B  C  D  E  F  G  H    ";
+        String borderTop = perspEnum == ChessGame.TeamColor.WHITE ? "     A  B  C  D  E  F  G  H    " : "     H  G  F  E  D  C  B  A    ";
         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
         int counter = (perspEnum == ChessGame.TeamColor.WHITE) ? 8 : 1;
+        int moveDir = perspEnum == ChessGame.TeamColor.WHITE ? 1 : -1;
+        int startNum = perspEnum == ChessGame.TeamColor.WHITE ? 7 : 0;
         System.out.print(borderTop);
         System.out.println(EscapeSequences.RESET_BG_COLOR);
-        for (int y = 0; y < 8; y++) {
+        for (int x = startNum; moveDir == 1 ? x >= 0 : x < 8; x -= moveDir) {
             System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
             System.out.print("  ");
             System.out.print(counter);
             System.out.print(" ");
-            for (int x = 0; x < 8; x++) {
-                String bgColor = ((x + y) % 2 == 0) ? EscapeSequences.SET_BG_COLOR_WHITE : EscapeSequences.SET_BG_COLOR_BLACK;
+            for (int y = (perspEnum == ChessGame.TeamColor.WHITE) ? 0 : 7;
+                 (perspEnum == ChessGame.TeamColor.WHITE) ? y < 8 : y >= 0;
+                 y += (perspEnum == ChessGame.TeamColor.WHITE) ? 1 : -1) {
+                String bgColor = ((y + x) % 2 == 0) ? EscapeSequences.SET_BG_COLOR_BLACK : EscapeSequences.SET_BG_COLOR_WHITE;
                 System.out.print(bgColor);
                 System.out.print(" ");
-                ChessPosition pos = new ChessPosition(y + 1, x + 1);
+                ChessPosition pos = new ChessPosition(x + 1, y + 1);
                 ChessPiece piecePos = board.getPiece(pos);
                 String piece = piecePos == null ? " " : piecePos.toString();
                 String textColor = piecePos == null ? "" :
@@ -40,6 +45,18 @@ public class PrintBoard {
             System.out.println(EscapeSequences.RESET_BG_COLOR);
             counter += (perspEnum == ChessGame.TeamColor.WHITE) ? -1 : 1;
         }
+        System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
         System.out.print(borderTop);
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+    }
+
+    @Test
+    void printBoards() {
+        var board = new ChessBoard();
+        board.resetBoard();
+        printDaBoard(board, "white");
+        System.out.println();
+        System.out.println();
+        printDaBoard(board, "blACK");
     }
 }
