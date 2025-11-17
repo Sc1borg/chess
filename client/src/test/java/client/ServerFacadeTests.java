@@ -118,6 +118,8 @@ public class ServerFacadeTests {
     public void joinSuccess() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest("random53", "pass", "email");
         var result = serverFacade.register(registerRequest);
+        CreateGameRequest createGameRequest = new CreateGameRequest("game");
+        assertDoesNotThrow(() -> serverFacade.create(createGameRequest, result));
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 12345);
         assertDoesNotThrow(() -> serverFacade.join(joinGameRequest, result));
     }
