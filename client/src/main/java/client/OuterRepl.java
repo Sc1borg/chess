@@ -62,7 +62,7 @@ public class OuterRepl {
             LoginResult loginResult = server.login(user);
             new MiddleRepl(server, loginResult).run();
         } catch (Exception ex) {
-            return "Failed to login" + ex.getMessage();
+            return "Failed to login: " + ex.getMessage();
         }
         return "\r\n" + user.username() + " has been logged out";
     }
@@ -77,7 +77,7 @@ public class OuterRepl {
             LoginResult loginResult = server.register(user);
             new MiddleRepl(server, loginResult).run();
         } catch (Exception ex) {
-            return "Failed to register" + ex.getMessage();
+            return "Failed to register: " + ex.getMessage();
         }
         return "\r\n" + user.username() + " has been logged out";
     }

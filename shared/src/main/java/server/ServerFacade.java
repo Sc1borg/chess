@@ -36,7 +36,7 @@ public class ServerFacade {
     public void create(CreateGameRequest gameReq, LoginResult user) throws Exception {
         var request = buildRequest("POST", "/game", gameReq, user.authToken());
         var response = sendRequest(request);
-        if (!checkResponse(response)) {
+        if (checkFailure(response)) {
             throw new Exception("Failed to create game");
         }
     }
@@ -50,7 +50,7 @@ public class ServerFacade {
     public void join(JoinGameRequest joinReq, LoginResult user) throws Exception {
         var request = buildRequest("PUT", "/game", joinReq, user.authToken());
         var response = sendRequest(request);
-        if (!checkResponse(response)) {
+        if (checkFailure(response)) {
             throw new Exception("Failed to join game");
         }
     }
@@ -58,7 +58,7 @@ public class ServerFacade {
     public void logout(LoginResult user) throws Exception {
         var request = buildRequest("GET", "/game", null, user.authToken());
         var response = sendRequest(request);
-        if (!checkResponse(response)) {
+        if (checkFailure(response)) {
             throw new Exception("Failed to logout");
         }
     }
@@ -94,12 +94,12 @@ public class ServerFacade {
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws Exception {
         var status = response.statusCode();
-        if (!isSuccessful(status)) {
+        if (isUnsuccessful(status)) {
             var body = response.body();
             HashMap<String, String> msgMap = new Gson().fromJson(body, HashMap.class);
             String msg = msgMap.get("message");
-            if (body != null) {
-                throw new Exception(body);
+            if (msg != null) {
+                throw new Exception(msg);
             }
 
             throw new Exception("other failure: " + status);
@@ -111,12 +111,12 @@ public class ServerFacade {
         return null;
     }
 
-    private boolean checkResponse(HttpResponse<String> response) throws Exception {
+    private boolean checkFailure(HttpResponse<String> response) {
         var status = response.statusCode();
-        return isSuccessful(status);
+        return isUnsuccessful(status);
     }
 
-    private boolean isSuccessful(int status) {
-        return (status / 100 == 2);
+    private boolean isUnsuccessful(int status) {
+        return (status / 100 != 2);
     }
 }

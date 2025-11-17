@@ -107,9 +107,12 @@ public class MiddleRepl {
             return "Invalid arguments";
         }
         try {
-            Map<String, ArrayList> gamesMap = server.list(user);
-            ArrayList games = gamesMap.get("games");
-            model.GameData game = new Gson().fromJson(games.get(Integer.parseInt(params[0]) - 1).toString(), GameData.class);
+            Integer.parseInt(params[0]);
+        } catch (Exception e) {
+            return "Input must be an integer";
+        }
+        try {
+            GameData game = getGame(params[0]);
             int id = game.gameID();
             JoinGameRequest joinReq = new JoinGameRequest(params[1].toUpperCase(), id);
             server.join(joinReq, user);
@@ -120,14 +123,26 @@ public class MiddleRepl {
         return "";
     }
 
+    private GameData getGame(String num) throws Exception {
+        Map<String, ArrayList> gamesMap = server.list(user);
+        ArrayList games = gamesMap.get("games");
+        if (Integer.parseInt(num) - 1 >= games.size() || Integer.parseInt(num) - 1 < 0) {
+            throw new Exception(num + " is not a valid game");
+        }
+        return new Gson().fromJson(games.get(Integer.parseInt(num) - 1).toString(), GameData.class);
+    }
+
     private String observe(String[] params) {
         if (params.length != 1) {
             return "Invalid arguments";
         }
         try {
-            Map<String, ArrayList> gamesMap = server.list(user);
-            ArrayList games = gamesMap.get("games");
-            model.GameData game = new Gson().fromJson(games.get(Integer.parseInt(params[0]) - 1).toString(), GameData.class);
+            Integer.parseInt(params[0]);
+        } catch (Exception e) {
+            return "Input must be an integer";
+        }
+        try {
+            GameData game = getGame(params[0]);
             PrintBoard.printDaBoard(game.game().getBoard(), "white");
         } catch (Exception e) {
             return e.getMessage();
