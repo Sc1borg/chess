@@ -1,9 +1,6 @@
 package client;
 
-import model.CreateGameRequest;
-import model.LoginRequest;
-import model.LoginResult;
-import model.RegisterRequest;
+import model.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,6 +107,25 @@ public class ServerFacadeTests {
         RegisterRequest registerRequest = new RegisterRequest("random3", "pass", "email");
         var result = serverFacade.register(registerRequest);
         assertDoesNotThrow(() -> serverFacade.list(result));
+    }
+
+    @Test
+    public void listFailure() {
+        assertThrows(Exception.class, () -> serverFacade.list(new LoginResult("user", "fakeAuth")));
+    }
+
+    @Test
+    public void joinSuccess() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest("random53", "pass", "email");
+        var result = serverFacade.register(registerRequest);
+        JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 12345);
+        assertDoesNotThrow(() -> serverFacade.join(joinGameRequest, result));
+    }
+
+    @Test
+    public void joinFailure() {
+        assertThrows(Exception.class, () -> serverFacade.join(new JoinGameRequest("white", 12345),
+                new LoginResult("user", "fakeAuth")));
     }
 
 }
