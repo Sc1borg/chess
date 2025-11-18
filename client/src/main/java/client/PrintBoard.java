@@ -4,7 +4,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import org.junit.jupiter.api.Test;
 import ui.EscapeSequences;
 
 public class PrintBoard {
@@ -48,15 +47,5 @@ public class PrintBoard {
         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
         System.out.print(borderTop);
         System.out.print(EscapeSequences.RESET_BG_COLOR);
-    }
-
-    @Test
-    void printBoards() {
-        var board = new ChessBoard();
-        board.resetBoard();
-        printDaBoard(board, "white");
-        System.out.println();
-        System.out.println();
-        printDaBoard(board, "blACK");
     }
 }
