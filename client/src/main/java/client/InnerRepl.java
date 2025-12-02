@@ -1,26 +1,28 @@
 package client;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
-import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
+import static ui.EscapeSequences.SET_TEXT_COLOR_YELLOW;
 
 public class InnerRepl {
     private final GameData game;
-    private final String persp;
+    private final ChessGame.TeamColor persp;
 
     public InnerRepl(GameData game, String persp) {
         this.game = game;
-        this.persp = persp;
+        this.persp = Objects.equals(persp, "WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
     }
 
     public void run() {
-        PrintBoard.printDaBoard(game.game().getBoard(), persp);
+        PrintBoard.highlight(game, null, persp);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -30,7 +32,7 @@ public class InnerRepl {
             try {
                 result = eval(line);
                 String help = "This is a cry for help";
-                System.out.print(SET_TEXT_COLOR_LIGHT_GREY + result);
+                System.out.print(SET_TEXT_COLOR_YELLOW + result);
             } catch (Throwable e) {
                 System.out.print(e.getMessage());
             }
@@ -44,11 +46,11 @@ public class InnerRepl {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
             return switch (cmd) {
-                case "redraw" -> Shared.redraw(game.game().getBoard(), persp);
+                case "redraw" -> Shared.redraw(game, persp);
                 case "leave" -> "quit";
                 case "move" -> move(params);
                 case "resign" -> resign();
-                case "highlight" -> Shared.highlight(game.game().getBoard(), persp, params);
+                case "highlight" -> Shared.highlight(game, persp, params);
                 default -> help();
             };
         } catch (Throwable ex) {
@@ -81,11 +83,13 @@ public class InnerRepl {
         } catch (Exception e) {
             return e.getMessage();
         }
-        return "I would make the move " + move + " here";
+        game.game().getBoard().makeMove(move, persp);
+        Shared.redraw(game, persp);
+        return "\nmade move " + params[0] + " " + params[1];
     }
 
     private String resign() {
-        return "";
+        return "You have resigned";
     }
 
     private String help() {
@@ -93,7 +97,7 @@ public class InnerRepl {
                 highlight <position> - highlights legal moves from the piece at that position
                 redraw - redraws chess board
                 leave - exit the game
-                make move <start position> <end position> - move piece at start position
+                move <start position> <end position> - move piece at start position
                 resign - give up
                 help - list possible commands
                 """;

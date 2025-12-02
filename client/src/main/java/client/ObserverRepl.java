@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.Arrays;
@@ -15,7 +16,7 @@ public class ObserverRepl {
     }
 
     public void run() {
-        PrintBoard.printDaBoard(game.game().getBoard(), "WHITE");
+        PrintBoard.highlight(game, null, ChessGame.TeamColor.WHITE);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -39,8 +40,8 @@ public class ObserverRepl {
 
             return switch (cmd) {
                 case "leave" -> "quit";
-                case "redraw" -> Shared.redraw(game.game().getBoard(), "white");
-                case "highlight" -> Shared.highlight(game.game().getBoard(), "white", params);
+                case "redraw" -> Shared.redraw(game, ChessGame.TeamColor.WHITE);
+                case "highlight" -> Shared.highlight(game, ChessGame.TeamColor.WHITE, params);
                 default -> help();
             };
         } catch (Throwable ex) {

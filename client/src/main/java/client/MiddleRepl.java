@@ -144,7 +144,6 @@ public class MiddleRepl {
         try {
             GameData game = getGame(params[0]);
             new ObserverRepl(game).run();
-            PrintBoard.printDaBoard(game.game().getBoard(), "white");
         } catch (Exception e) {
             return e.getMessage();
         }

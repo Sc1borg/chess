@@ -1,7 +1,8 @@
 package client;
 
-import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessPosition;
+import model.GameData;
 
 import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
@@ -10,12 +11,12 @@ public class Shared {
         System.out.print("\n" + ">>>" + SET_TEXT_COLOR_WHITE);
     }
 
-    public static String redraw(ChessBoard board, String persp) {
-        PrintBoard.printDaBoard(board, persp);
+    public static String redraw(GameData game, ChessGame.TeamColor persp) {
+        PrintBoard.highlight(game, null, persp);
         return "";
     }
 
-    public static String highlight(ChessBoard board, String persp, String[] params) {
+    public static String highlight(GameData game, ChessGame.TeamColor persp, String[] params) {
         if (params.length != 1) {
             return "invalid parameters";
         }
@@ -25,7 +26,7 @@ public class Shared {
         } catch (Exception ex) {
             return ex.getMessage();
         }
-        PrintBoard.highlight(board, pos, persp);
+        PrintBoard.highlight(game, pos, persp);
         return "";
     }
 
