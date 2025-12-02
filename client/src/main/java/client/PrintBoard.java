@@ -50,8 +50,9 @@ public class PrintBoard {
     }
 
     public static void highlight(ChessBoard board, ChessPosition position, String persp) {
-        ChessPiece piece = board.getPiece(position);
-        Collection<ChessMove> validMoves = game.validMoves(position);
+        ChessPiece startPiece = board.getPiece(position);
+//        Collection<ChessMove> validMoves = game.validMoves(startPiece);
+        Collection<ChessMove> validMoves = new ArrayList<>();
         Collection<ChessPosition> positions = new ArrayList<ChessPosition>();
         for (ChessMove move : validMoves) {
             positions.add(move.getEndPosition());

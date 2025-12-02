@@ -1,5 +1,8 @@
 package client;
 
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.GameData;
 
 import java.util.Arrays;
@@ -54,7 +57,31 @@ public class InnerRepl {
     }
 
     private String move(String[] params) {
-        return "";
+        ChessPiece.PieceType promo = null;
+        if (params.length != 3 && params.length != 2) {
+            return "Invalid parameters";
+        }
+        if (params.length == 3) {
+            promo = switch (params[2].toUpperCase()) {
+                case "KNIGHT" -> ChessPiece.PieceType.KNIGHT;
+                case "BISHOP" -> ChessPiece.PieceType.BISHOP;
+                case "QUEEN" -> ChessPiece.PieceType.QUEEN;
+                case "ROOK" -> ChessPiece.PieceType.ROOK;
+                default -> ChessPiece.PieceType.PAWN;
+            };
+            if (promo == ChessPiece.PieceType.PAWN) {
+                return "Invalid parameters";
+            }
+        }
+        ChessMove move;
+        try {
+            ChessPosition startPos = Shared.interpretPos(params[0]);
+            ChessPosition endPos = Shared.interpretPos(params[1]);
+            move = new ChessMove(startPos, endPos, promo);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return "I would make the move " + move + " here";
     }
 
     private String resign() {

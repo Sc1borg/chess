@@ -40,7 +40,7 @@ public class ObserverRepl {
             return switch (cmd) {
                 case "leave" -> "quit";
                 case "redraw" -> Shared.redraw(game.game().getBoard(), "white");
-                case "highlight" -> Shared.highlight(game.game().getBoard(), params);
+                case "highlight" -> Shared.highlight(game.game().getBoard(), "white", params);
                 default -> help();
             };
         } catch (Throwable ex) {
