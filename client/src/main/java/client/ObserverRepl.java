@@ -15,6 +15,7 @@ public class ObserverRepl {
     }
 
     public void run() {
+        PrintBoard.printDaBoard(game.game().getBoard(), "WHITE");
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {

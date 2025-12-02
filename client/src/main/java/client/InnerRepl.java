@@ -1,6 +1,5 @@
 package client;
 
-import chess.ChessBoard;
 import model.GameData;
 
 import java.util.Arrays;
@@ -42,16 +41,24 @@ public class InnerRepl {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
             return switch (cmd) {
-                case "redraw" -> Shared.redraw(board, color);
+                case "redraw" -> Shared.redraw(game.game().getBoard(), persp);
                 case "leave" -> "quit";
-                case "move" -> move();
+                case "move" -> move(params);
                 case "resign" -> resign();
-                case "highlight" -> Shared.highlight(params, );
+                case "highlight" -> Shared.highlight(game.game().getBoard(), persp, params);
                 default -> help();
             };
         } catch (Throwable ex) {
             return ex.getMessage();
         }
+    }
+
+    private String move(String[] params) {
+        return "";
+    }
+
+    private String resign() {
+        return "";
     }
 
     private String help() {
