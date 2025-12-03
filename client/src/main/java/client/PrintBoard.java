@@ -10,7 +10,7 @@ import java.util.Collection;
 public class PrintBoard {
     public static void highlight(GameData game, ChessPosition position, ChessGame.TeamColor persp) {
         Collection<ChessPosition> positions = new ArrayList<ChessPosition>();
-        if (position != null) {
+        if (position != null && game.game().getBoard().getPiece(position) != null) {
             Collection<ChessMove> validMoves = game.game().validMoves(position);
             if (!validMoves.isEmpty()) {
                 for (ChessMove move : validMoves) {

@@ -59,6 +59,9 @@ public class InnerRepl {
     }
 
     private String move(String[] params) {
+        if (game.game().getTeamTurn() != persp) {
+            return "not your turn";
+        }
         ChessPiece.PieceType promo = null;
         if (params.length != 3 && params.length != 2) {
             return "Invalid parameters";
@@ -76,16 +79,21 @@ public class InnerRepl {
             }
         }
         ChessMove move;
+        ChessPosition startPos;
         try {
-            ChessPosition startPos = Shared.interpretPos(params[0]);
+            startPos = Shared.interpretPos(params[0]);
             ChessPosition endPos = Shared.interpretPos(params[1]);
             move = new ChessMove(startPos, endPos, promo);
         } catch (Exception e) {
             return e.getMessage();
         }
-        game.game().getBoard().makeMove(move, persp);
-        Shared.redraw(game, persp);
-        return "\nmade move " + params[0] + " " + params[1];
+        try {
+            game.game().makeMove(move);
+            Shared.redraw(game, persp);
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+        return "";
     }
 
     private String resign() {
