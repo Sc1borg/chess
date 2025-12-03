@@ -21,6 +21,10 @@ public class ServerFacade {
     }
 
 
+    public String getUrl() {
+        return serverUrl;
+    }
+
     public LoginResult register(RegisterRequest user) throws Exception {
         var request = buildRequest("POST", "/user", user, null);
         var response = sendRequest(request);

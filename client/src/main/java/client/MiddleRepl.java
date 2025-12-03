@@ -116,7 +116,7 @@ public class MiddleRepl {
             int id = game.gameID();
             JoinGameRequest joinReq = new JoinGameRequest(params[1].toUpperCase(), id);
             server.join(joinReq, user);
-            new InnerRepl(game, params[1].toUpperCase()).run();
+            new InnerRepl(server, user, game, params[1].toUpperCase()).run();
         } catch (Exception ex) {
             return ex.getMessage();
         }

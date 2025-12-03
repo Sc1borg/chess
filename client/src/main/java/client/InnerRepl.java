@@ -4,24 +4,47 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import client.websocket.NotificationHandler;
+import client.websocket.WebSocketFacade;
 import model.GameData;
+import model.LoginResult;
+import server.ServerFacade;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 import static ui.EscapeSequences.SET_TEXT_COLOR_YELLOW;
 
-public class InnerRepl {
+public class InnerRepl implements NotificationHandler {
+    private final ServerFacade server;
+    private final LoginResult user;
     private final GameData game;
     private final ChessGame.TeamColor persp;
+    private final WebSocketFacade ws;
 
-    public InnerRepl(GameData game, String persp) {
+    public InnerRepl(ServerFacade server, LoginResult user, GameData game, String persp) {
+        this.server = server;
+        this.user = user;
         this.game = game;
+        String serverUrl = server.getUrl();
         this.persp = Objects.equals(persp, "WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+        try {
+            ws = new WebSocketFacade(serverUrl, this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void run() {
+        try {
+            ws.joinGame(user.authToken(), game.gameID());
+        } catch (Exception ex) {
+            System.out.print(ex.getMessage());
+        }
+
         PrintBoard.highlight(game, null, persp);
         Scanner scanner = new Scanner(System.in);
         String result = "";
@@ -109,5 +132,10 @@ public class InnerRepl {
                 resign - give up
                 help - list possible commands
                 """;
+    }
+
+    @Override
+    public void notify(ServerMessage notification) {
+        System.out.println(SET_TEXT_COLOR_RED + notification);
     }
 }
