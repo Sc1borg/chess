@@ -170,7 +170,7 @@ public class InnerRepl implements NotificationHandler {
         } else if (notification instanceof NotificationMessage) {
             System.out.println(SET_TEXT_COLOR_YELLOW + ((NotificationMessage) notification).getMessage());
         } else if (notification instanceof ErrorMessage) {
-            System.out.println(SET_TEXT_COLOR_RED + ((ErrorMessage) notification).getMessage());
+            System.out.println(SET_TEXT_COLOR_RED + ((ErrorMessage) notification).getErrorMessage());
         }
     }
 }
