@@ -9,6 +9,9 @@ import client.websocket.WebSocketFacade;
 import model.GameData;
 import model.LoginResult;
 import server.ServerFacade;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
@@ -24,6 +27,7 @@ public class InnerRepl implements NotificationHandler {
     private final GameData game;
     private final ChessGame.TeamColor persp;
     private final WebSocketFacade ws;
+    private ChessGame board;
 
     public InnerRepl(ServerFacade server, LoginResult user, GameData game, String persp) {
         this.server = server;
@@ -33,18 +37,13 @@ public class InnerRepl implements NotificationHandler {
         this.persp = Objects.equals(persp, "WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         try {
             ws = new WebSocketFacade(serverUrl, this);
+            ws.joinGame(user.authToken(), game.gameID());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public void run() {
-        try {
-            ws.joinGame(user.authToken(), game.gameID());
-        } catch (Exception ex) {
-            System.out.print(ex.getMessage());
-        }
-
         PrintBoard.highlight(game, null, persp);
         Scanner scanner = new Scanner(System.in);
         String result = "";
@@ -70,7 +69,7 @@ public class InnerRepl implements NotificationHandler {
 
             return switch (cmd) {
                 case "redraw" -> Shared.redraw(game, persp);
-                case "leave" -> "quit";
+                case "leave" -> leave();
                 case "move" -> move(params);
                 case "resign" -> resign();
                 case "highlight" -> Shared.highlight(game, persp, params);
@@ -79,6 +78,15 @@ public class InnerRepl implements NotificationHandler {
         } catch (Throwable ex) {
             return ex.getMessage();
         }
+    }
+
+    private String leave() {
+        try {
+            ws.leave(user.authToken(), game.gameID());
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return "quit";
     }
 
     private String move(String[] params) {
@@ -103,9 +111,10 @@ public class InnerRepl implements NotificationHandler {
         }
         ChessMove move;
         ChessPosition startPos;
+        ChessPosition endPos;
         try {
             startPos = Shared.interpretPos(params[0]);
-            ChessPosition endPos = Shared.interpretPos(params[1]);
+            endPos = Shared.interpretPos(params[1]);
             move = new ChessMove(startPos, endPos, promo);
         } catch (Exception e) {
             return e.getMessage();
@@ -113,6 +122,7 @@ public class InnerRepl implements NotificationHandler {
         try {
             game.game().makeMove(move);
             Shared.redraw(game, persp);
+            ws.makeMove(move.toString(), user.authToken(), game.gameID());
         } catch (Exception ex) {
             return ex.getMessage();
         }
@@ -120,6 +130,25 @@ public class InnerRepl implements NotificationHandler {
     }
 
     private String resign() {
+        Scanner scanner = new Scanner(System.in);
+        String result = "";
+        while (true) {
+            System.out.print("Are you sure? (yes/no)");
+            Shared.printNew();
+            String line = scanner.nextLine();
+            if (line.equalsIgnoreCase("yes") || line.equalsIgnoreCase("no")) {
+                result = line.toLowerCase();
+                break;
+            }
+        }
+        if (result.equals("no")) {
+            return "You chose not to resign";
+        }
+        try {
+            ws.resign(user.authToken(), game.gameID());
+        } catch (Exception e) {
+            return e.getMessage();
+        }
         return "You have resigned";
     }
 
@@ -136,6 +165,12 @@ public class InnerRepl implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.println(SET_TEXT_COLOR_RED + notification);
+        if (notification instanceof LoadGameMessage) {
+            board = ((LoadGameMessage) notification).getGame();
+        } else if (notification instanceof NotificationMessage) {
+            System.out.println(SET_TEXT_COLOR_YELLOW + ((NotificationMessage) notification).getMessage());
+        } else if (notification instanceof ErrorMessage) {
+            System.out.println(SET_TEXT_COLOR_RED + ((ErrorMessage) notification).getMessage());
+        }
     }
 }
