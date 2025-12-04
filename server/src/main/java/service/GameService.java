@@ -66,6 +66,6 @@ public class GameService {
 
     public GameData getGame(int gameID) throws DataAccessException {
 
-        return DatabaseRegistry.getGameDao().findGame(gameID);
+        return DatabaseRegistry.getGameDao().getGame(gameID);
     }
 }
