@@ -88,7 +88,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var message = String.format("%s made move %s", username, moveString);
             var notification = new NotificationMessage(message);
             var newMessage = new LoadGameMessage(game.game());
-            connections.broadcastSelf(session, newMessage);
+            connections.broadcastGame(null, newMessage);
             connections.broadcast(session, notification);
         } catch (Exception ex) {
             throw new Exception(ex.getMessage());
@@ -100,7 +100,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         char p = letter(move.getEndPosition().getColumn());
         int x = move.getStartPosition().getRow();
         int q = move.getEndPosition().getRow();
-        return y + x + " " + p + q;
+        return "" + y + x + " " + p + q;
     }
 
     private char letter(int num) {

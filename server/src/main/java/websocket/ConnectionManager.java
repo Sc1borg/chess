@@ -29,6 +29,17 @@ public class ConnectionManager {
         }
     }
 
+    public void broadcastGame(Session excludeSession, LoadGameMessage message) throws IOException {
+        String msg = message.toString();
+        for (Session c : connections.values()) {
+            if (c.isOpen()) {
+                if (!c.equals(excludeSession)) {
+                    c.getRemote().sendString(msg);
+                }
+            }
+        }
+    }
+
     public void broadcastSelf(Session selfSession, LoadGameMessage message) throws IOException {
         String msg = message.toString();
         for (Session c : connections.values()) {
