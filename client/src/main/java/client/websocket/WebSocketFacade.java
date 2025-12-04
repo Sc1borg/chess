@@ -2,6 +2,7 @@ package client.websocket;
 
 import com.google.gson.Gson;
 import jakarta.websocket.*;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -38,7 +39,8 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(String move, String authToken, int gameID) throws Exception {
         try {
-            var action = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID);
+            System.out.print("I am in the websocket make move");
+            var action = new MakeMoveCommand(authToken, gameID, move);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new Exception(ex.getMessage());

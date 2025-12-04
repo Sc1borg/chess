@@ -1,17 +1,16 @@
 package client;
 
 import chess.*;
-import model.GameData;
 import ui.EscapeSequences;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class PrintBoard {
-    public static void highlight(GameData game, ChessPosition position, ChessGame.TeamColor persp) {
+    public static void highlight(ChessGame game, ChessPosition position, ChessGame.TeamColor persp) {
         Collection<ChessPosition> positions = new ArrayList<ChessPosition>();
-        if (position != null && game.game().getBoard().getPiece(position) != null) {
-            Collection<ChessMove> validMoves = game.game().validMoves(position);
+        if (position != null && game.getBoard().getPiece(position) != null) {
+            Collection<ChessMove> validMoves = game.validMoves(position);
             if (!validMoves.isEmpty()) {
                 for (ChessMove move : validMoves) {
                     positions.add(move.getEndPosition());
@@ -25,7 +24,7 @@ public class PrintBoard {
         int startNum = persp == ChessGame.TeamColor.WHITE ? 7 : 0;
         System.out.print(borderTop);
         System.out.println(EscapeSequences.RESET_BG_COLOR);
-        ChessBoard board = game.game().getBoard();
+        ChessBoard board = game.getBoard();
         for (int x = startNum; moveDir == 1 ? x >= 0 : x < 8; x -= moveDir) {
             System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
             System.out.print("  ");

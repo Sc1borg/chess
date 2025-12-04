@@ -23,7 +23,7 @@ public class InMemoryGameDAO implements GameDAO {
         GAME_DATA_MAP.put(gameData.gameID(), gameData);
     }
 
-    public boolean getGame(int gameID) {
+    public boolean findGame(int gameID) {
         return GAME_DATA_MAP.containsKey(gameID);
     }
 

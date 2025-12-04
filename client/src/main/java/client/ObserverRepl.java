@@ -1,22 +1,29 @@
 package client;
 
 import chess.ChessGame;
+import client.websocket.NotificationHandler;
 import model.GameData;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 import static ui.EscapeSequences.SET_TEXT_COLOR_YELLOW;
 
-public class ObserverRepl {
+public class ObserverRepl implements NotificationHandler {
     private final GameData game;
+    private ChessGame board;
 
     public ObserverRepl(GameData game) {
         this.game = game;
     }
 
     public void run() {
-        PrintBoard.highlight(game, null, ChessGame.TeamColor.WHITE);
+        PrintBoard.highlight(board, null, ChessGame.TeamColor.WHITE);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -40,8 +47,8 @@ public class ObserverRepl {
 
             return switch (cmd) {
                 case "leave" -> "quit";
-                case "redraw" -> Shared.redraw(game, ChessGame.TeamColor.WHITE);
-                case "highlight" -> Shared.highlight(game, ChessGame.TeamColor.WHITE, params);
+                case "redraw" -> Shared.redraw(board, ChessGame.TeamColor.WHITE);
+                case "highlight" -> Shared.highlight(board, ChessGame.TeamColor.WHITE, params);
                 default -> help();
             };
         } catch (Throwable ex) {
@@ -56,5 +63,16 @@ public class ObserverRepl {
                 highlight <position> - highlights legal moves for piece at that position
                 help - list possible commands
                 """;
+    }
+
+    @Override
+    public void notify(ServerMessage notification) {
+        if (notification instanceof LoadGameMessage) {
+            board = ((LoadGameMessage) notification).getGame();
+        } else if (notification instanceof NotificationMessage) {
+            System.out.println(SET_TEXT_COLOR_YELLOW + ((NotificationMessage) notification).getMessage());
+        } else if (notification instanceof ErrorMessage) {
+            System.out.println(SET_TEXT_COLOR_RED + ((ErrorMessage) notification).getErrorMessage());
+        }
     }
 }

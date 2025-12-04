@@ -22,7 +22,6 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 import static ui.EscapeSequences.SET_TEXT_COLOR_YELLOW;
 
 public class InnerRepl implements NotificationHandler {
-    private final ServerFacade server;
     private final LoginResult user;
     private final GameData game;
     private final ChessGame.TeamColor persp;
@@ -30,7 +29,6 @@ public class InnerRepl implements NotificationHandler {
     private ChessGame board;
 
     public InnerRepl(ServerFacade server, LoginResult user, GameData game, String persp) {
-        this.server = server;
         this.user = user;
         this.game = game;
         String serverUrl = server.getUrl();
@@ -44,7 +42,7 @@ public class InnerRepl implements NotificationHandler {
     }
 
     public void run() {
-        PrintBoard.highlight(game, null, persp);
+        PrintBoard.highlight(board, null, persp);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -68,11 +66,11 @@ public class InnerRepl implements NotificationHandler {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
             return switch (cmd) {
-                case "redraw" -> Shared.redraw(game, persp);
+                case "redraw" -> Shared.redraw(board, persp);
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "resign" -> resign();
-                case "highlight" -> Shared.highlight(game, persp, params);
+                case "highlight" -> Shared.highlight(board, persp, params);
                 default -> help();
             };
         } catch (Throwable ex) {
@@ -121,7 +119,7 @@ public class InnerRepl implements NotificationHandler {
         }
         try {
             game.game().makeMove(move);
-            Shared.redraw(game, persp);
+            Shared.redraw(board, persp);
             ws.makeMove(move.toString(), user.authToken(), game.gameID());
         } catch (Exception ex) {
             return ex.getMessage();

@@ -38,7 +38,7 @@ public class GameService {
 
     private int createGameID() throws DataAccessException {
         int gameID = 12345;
-        while (DatabaseRegistry.getGameDao().getGame(gameID)) {
+        while (DatabaseRegistry.getGameDao().findGame(gameID)) {
             gameID += 1;
         }
         return gameID;
@@ -54,7 +54,7 @@ public class GameService {
             throw new DataAccessException("Error: unauthorized");
         }
         //Check that the game exists
-        if (!DatabaseRegistry.getGameDao().getGame(joinGameRequest.gameID())) {
+        if (!DatabaseRegistry.getGameDao().findGame(joinGameRequest.gameID())) {
             throw new DataAccessException("Error: bad request");
         }
         //Get the username and try joining game
@@ -62,5 +62,10 @@ public class GameService {
         if (!DatabaseRegistry.getGameDao().joinGame(joinGameRequest.gameID(), joinGameRequest.playerColor(), username)) {
             throw new DataAccessException("Error: already taken");
         }
+    }
+
+    public GameData getGame(int gameID) throws DataAccessException {
+
+        return DatabaseRegistry.getGameDao().findGame(gameID);
     }
 }

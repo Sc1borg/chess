@@ -11,7 +11,7 @@ public interface GameDAO {
 
     void createGame(GameData gameData) throws DataAccessException;
 
-    boolean getGame(int gameID) throws DataAccessException;
+    boolean findGame(int gameID) throws DataAccessException;
 
     boolean joinGame(int gameID, String playerColor, String username) throws DataAccessException;
 }

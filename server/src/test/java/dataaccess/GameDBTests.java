@@ -32,7 +32,7 @@ public class GameDBTests {
 
     @Test
     void createGameDBSuccess() throws DataAccessException {
-        assert gameDAO.getGame(gameID);
+        assert gameDAO.findGame(gameID);
     }
 
     @Test
