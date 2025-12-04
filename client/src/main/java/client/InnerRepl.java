@@ -42,7 +42,7 @@ public class InnerRepl implements NotificationHandler {
     }
 
     public void run() {
-        PrintBoard.highlight(board, null, persp);
+        PrintBoard.highlight(game.game(), null, persp);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -119,7 +119,7 @@ public class InnerRepl implements NotificationHandler {
         }
         try {
             game.game().makeMove(move);
-            Shared.redraw(board, persp);
+            Shared.redraw(game.game(), persp);
             ws.makeMove(move.toString(), user.authToken(), game.gameID());
         } catch (Exception ex) {
             return ex.getMessage();

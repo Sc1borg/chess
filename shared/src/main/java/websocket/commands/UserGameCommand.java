@@ -29,7 +29,7 @@ public class UserGameCommand {
         RESIGN
     }
 
-    public CommandType getCommandType() {
+    public static CommandType getCommandType() {
         return commandType;
     }
 

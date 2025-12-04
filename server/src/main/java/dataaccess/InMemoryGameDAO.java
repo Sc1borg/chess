@@ -42,4 +42,9 @@ public class InMemoryGameDAO implements GameDAO {
         GAME_DATA_MAP.put(gameID, newGameData);
         return true;
     }
+
+    @Override
+    public GameData getGame(int gameID) throws DataAccessException {
+        return GAME_DATA_MAP.get(gameID);
+    }
 }

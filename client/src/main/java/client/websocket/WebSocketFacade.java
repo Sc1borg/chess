@@ -39,7 +39,6 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(String move, String authToken, int gameID) throws Exception {
         try {
-            System.out.print("I am in the websocket make move");
             var action = new MakeMoveCommand(authToken, gameID, move);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {

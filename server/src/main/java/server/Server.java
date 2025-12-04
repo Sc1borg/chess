@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.GameService;
 import service.UserService;
+import websocket.WebSocketHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,17 +25,16 @@ public class Server {
     private final GameService gameService = new GameService();
     private final UserService userService = new UserService();
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
+        webSocketHandler = new WebSocketHandler();
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .get("/echo/{msg}", ctx -> ctx.result("HTTP response: " + ctx.pathParam("msg")))
                 .ws("/ws", ws -> {
-                    ws.onConnect(ctx -> {
-                        ctx.enableAutomaticPings();
-                        System.out.println("Websocket connected!");
-                    });
-                    ws.onMessage(ctx -> ctx.send("WebSocket response:" + ctx.message()));
-                    ws.onClose(ctx -> System.out.println("Websocket closed"));
+                    ws.onConnect(webSocketHandler);
+                    ws.onMessage(webSocketHandler);
+                    ws.onClose(webSocketHandler);
                 });
         try {
             DatabaseManager.createDatabase();

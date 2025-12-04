@@ -23,7 +23,7 @@ public class ObserverRepl implements NotificationHandler {
     }
 
     public void run() {
-        PrintBoard.highlight(board, null, ChessGame.TeamColor.WHITE);
+        PrintBoard.highlight(game.game(), null, ChessGame.TeamColor.WHITE);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
