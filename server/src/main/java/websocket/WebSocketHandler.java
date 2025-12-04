@@ -1,6 +1,8 @@
 package websocket;
 
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.websocket.*;
@@ -10,6 +12,7 @@ import service.GameService;
 import service.UserService;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
@@ -49,7 +52,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(String authToken, int gameID, Session session) throws IOException, DataAccessException {
-        connections.add(session);
+        connections.add(session, gameID);
         String username = userService.getUsername(authToken);
         GameData game = gameService.getGame(gameID);
         String color = username.equals(game.blackUsername()) ? "Black" : username.equals(game.whiteUsername()) ? "White" : "Observer";
@@ -57,7 +60,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         var notification = new NotificationMessage(message);
         var newMessage = new LoadGameMessage(game.game());
         connections.broadcastSelf(session, newMessage);
-        connections.broadcast(session, notification);
+        connections.broadcast(session, notification, gameID);
     }
 
     private void leave(String authToken, int gameID, Session session) throws IOException, DataAccessException {
@@ -65,33 +68,68 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         userService.leaveGame(gameID, username);
         var message = String.format("%s left the game", username);
         var notification = new NotificationMessage(message);
-        connections.broadcast(session, notification);
+        connections.broadcast(session, notification, gameID);
         connections.remove(session);
     }
 
     private void resign(String authToken, int gameID, Session session) throws DataAccessException, IOException {
         String username = userService.getUsername(authToken);
         GameData game = gameService.getGame(gameID);
+        if (!username.equals(game.whiteUsername()) && !username.equals(game.blackUsername())) {
+            var message = "Error: You are not a player";
+            var error = new ErrorMessage(message);
+            connections.broadcastSelf(session, error);
+            return;
+        }
+        if (game.game().getOver()) {
+            var message = "Error: Game is already over";
+            var error = new ErrorMessage(message);
+            connections.broadcastSelf(session, error);
+            return;
+        }
         game.game().setOver();
         var message = String.format("%s has resigned", username);
         var notification = new NotificationMessage(message);
-        connections.broadcast(null, notification);
+        connections.broadcast(null, notification, gameID);
     }
 
     private void makeMove(ChessMove move, String authToken, int gameID, Session session) throws Exception {
         try {
             String username = userService.getUsername(authToken);
-            String moveString = uninterpretMove(move);
             GameData game = gameService.getGame(gameID);
-            game.game().makeMove(move);
+            String moveString = uninterpretMove(move);
+            ChessGame.TeamColor color = username.equals(game.whiteUsername()) ? ChessGame.TeamColor.WHITE :
+                    username.equals(game.blackUsername()) ? ChessGame.TeamColor.BLACK : null;
+            if (color == null) {
+                var message = "Error: You are not a player";
+                var error = new ErrorMessage(message);
+                connections.broadcastSelf(session, error);
+                return;
+            }
+            if (color != game.game().getTeamTurn()) {
+                throw new Exception("Error: Not your turn");
+            }
+            if (game.game().getOver()) {
+                throw new Exception("Error: Game is already over");
+            }
+            try {
+                game.game().makeMove(move);
+            } catch (InvalidMoveException e) {
+                var message = e.getMessage();
+                var error = new ErrorMessage(message);
+                connections.broadcastSelf(session, error);
+                return;
+            }
             gameService.updateGame(game);
             var message = String.format("%s made move %s", username, moveString);
             var notification = new NotificationMessage(message);
             var newMessage = new LoadGameMessage(game.game());
-            connections.broadcastGame(null, newMessage);
-            connections.broadcast(session, notification);
+            connections.broadcast(null, newMessage, gameID);
+            connections.broadcast(session, notification, gameID);
         } catch (Exception ex) {
-            throw new Exception(ex.getMessage());
+            var message = ex.getMessage();
+            var error = new ErrorMessage(message);
+            connections.broadcastSelf(session, error);
         }
     }
 

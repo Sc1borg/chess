@@ -87,9 +87,6 @@ public class InnerRepl implements NotificationHandler {
     }
 
     private String move(String[] params) {
-        if (board.getTeamTurn() != persp) {
-            return "not your turn";
-        }
         ChessPiece.PieceType promo = null;
         if (params.length != 3 && params.length != 2) {
             return "Invalid parameters";
@@ -117,7 +114,6 @@ public class InnerRepl implements NotificationHandler {
             return e.getMessage();
         }
         try {
-            board.makeMove(move);
             ws.makeMove(move, user.authToken(), game.gameID());
         } catch (Exception ex) {
             return ex.getMessage();
