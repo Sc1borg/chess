@@ -29,12 +29,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleMessage(WsMessageContext ctx) {
         try {
+            MakeMoveCommand mvcmd = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
             UserGameCommand action = new Gson().fromJson(ctx.message(), UserGameCommand.class);
-            switch (UserGameCommand.getCommandType()) {
+            switch (action.getCommandType()) {
                 case LEAVE -> leave(action.getAuthToken(), action.getGameID(), ctx.session);
                 case CONNECT -> connect(action.getAuthToken(), action.getGameID(), ctx.session);
-                case MAKE_MOVE ->
-                        makeMove(((MakeMoveCommand) action).getMove(), action.getAuthToken(), action.getGameID(), ctx.session);
+                case MAKE_MOVE -> makeMove(mvcmd.getMove(), action.getAuthToken(), action.getGameID(), ctx.session);
                 case RESIGN -> resign(action.getAuthToken(), action.getGameID(), ctx.session);
             }
         } catch (Exception e) {
@@ -66,7 +66,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.remove(session);
     }
 
-    public void makeMove(ChessMove move, String authToken, int gameID, Session session) throws Exception {
+    private void resign(String authToken, int gameID, Session session) throws DataAccessException, IOException {
+        String username = userService.getUsername(authToken);
+        GameData game = gameService.getGame(gameID);
+        game.game().setOver();
+        var message = String.format("%s has resigned", username);
+        var notification = new NotificationMessage(message);
+        connections.broadcast(null, notification);
+    }
+
+    private void makeMove(ChessMove move, String authToken, int gameID, Session session) throws Exception {
         try {
             String username = userService.getUsername(authToken);
             String moveString = uninterpretMove(move);
@@ -75,17 +84,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             gameService.updateGame(game);
             var message = String.format("%s made move %s", username, moveString);
             var notification = new NotificationMessage(message);
-            connections.broadcast(null, notification);
+            connections.broadcast(session, notification);
         } catch (Exception ex) {
             throw new Exception(ex.getMessage());
         }
     }
 
     private String uninterpretMove(ChessMove move) {
-        char y = letter(move.getStartPosition().getRow());
-        char p = letter(move.getEndPosition().getRow());
-        int x = move.getStartPosition().getColumn();
-        int q = move.getEndPosition().getColumn();
+        char y = letter(move.getStartPosition().getColumn());
+        char p = letter(move.getEndPosition().getColumn());
+        int x = move.getStartPosition().getRow();
+        int q = move.getEndPosition().getRow();
         return y + x + " " + p + q;
     }
 

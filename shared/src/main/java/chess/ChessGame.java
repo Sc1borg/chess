@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class ChessGame {
     ChessBoard board = new ChessBoard();
-
+    boolean over = false;
     TeamColor turn;
 
     public ChessGame() {
@@ -80,6 +80,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (over) {
+            throw new InvalidMoveException("The game is over");
+        }
         ChessPosition start = move.getStartPosition();
         if (board.getPiece(start) == null || board.getPiece(start).getTeamColor() != turn) {
             throw new InvalidMoveException("That move isn't valid");
@@ -337,6 +340,7 @@ public class ChessGame {
                 }
             }
         }
+        over = true;
         return true;
     }
 
@@ -365,6 +369,7 @@ public class ChessGame {
                 }
             }
         }
+        over = true;
         return true;
     }
 
@@ -410,5 +415,13 @@ public class ChessGame {
                 "board=" + board +
                 ", turn=" + turn +
                 '}';
+    }
+
+    public boolean getOver() {
+        return over;
+    }
+
+    public void setOver() {
+        over = true;
     }
 }

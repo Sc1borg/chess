@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import jakarta.websocket.*;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ServerMessage;
+import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,9 +25,15 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
-            this.session.addMessageHandler((MessageHandler.Whole<String>) message -> {
-                ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                notificationHandler.notify(notification);
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String message) {
+                    System.out.println(message);
+                    NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
+                    System.out.println("hello");
+                    System.out.println(notification);
+                    notificationHandler.notify(notification);
+                }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new Exception(ex.getMessage());
@@ -36,6 +42,7 @@ public class WebSocketFacade extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+
     }
 
     public void makeMove(ChessMove move, String authToken, int gameID) throws Exception {

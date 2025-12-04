@@ -129,7 +129,7 @@ public class InnerRepl implements NotificationHandler {
 
     private String resign() {
         Scanner scanner = new Scanner(System.in);
-        String result = "";
+        String result;
         while (true) {
             System.out.print("Are you sure? (yes/no)");
             Shared.printNew();
@@ -163,6 +163,7 @@ public class InnerRepl implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage notification) {
+        System.out.println("The problem is here");
         if (notification instanceof LoadGameMessage) {
             board = ((LoadGameMessage) notification).getGame();
         } else if (notification instanceof NotificationMessage) {

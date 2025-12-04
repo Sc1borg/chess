@@ -68,7 +68,7 @@ public class GameService {
         return DatabaseRegistry.getGameDao().getGame(gameID);
     }
 
-    public void updateGame(GameData game) {
+    public void updateGame(GameData game) throws DataAccessException {
         DatabaseRegistry.getGameDao().updateGame(game);
     }
 }

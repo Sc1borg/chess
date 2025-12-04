@@ -50,6 +50,11 @@ public class InMemoryGameDAO implements GameDAO {
 
     @Override
     public void leaveGame(int gameID, String username) throws DataAccessException {
-        
+
+    }
+
+    @Override
+    public void updateGame(GameData game) throws DataAccessException {
+
     }
 }
