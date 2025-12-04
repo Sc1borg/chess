@@ -59,7 +59,7 @@ public class ObserverRepl implements NotificationHandler {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
 
             return switch (cmd) {
-                case "leave" -> "quit";
+                case "leave" -> leave();
                 case "redraw" -> Shared.redraw(board, ChessGame.TeamColor.WHITE);
                 case "highlight" -> Shared.highlight(board, ChessGame.TeamColor.WHITE, params);
                 default -> help();
@@ -67,6 +67,15 @@ public class ObserverRepl implements NotificationHandler {
         } catch (Throwable ex) {
             return ex.getMessage();
         }
+    }
+
+    private String leave() {
+        try {
+            ws.leave(user.authToken(), game.gameID());
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+        return "quit";
     }
 
     private String help() {

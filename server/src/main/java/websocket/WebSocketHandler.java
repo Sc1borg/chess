@@ -133,11 +133,40 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var newMessage = new LoadGameMessage(game.game());
             connections.broadcast(null, newMessage, gameID);
             connections.broadcast(session, notification, gameID);
+            if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                gameBroadcast(String.format("%s is in checkmate, good game", game.whiteUsername()), gameID);
+                return;
+            }
+            if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                gameBroadcast(String.format("%s is in checkmate, good game", game.blackUsername()), gameID);
+                return;
+            }
+            if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+                gameBroadcast(String.format("%s is in check", game.whiteUsername()), gameID);
+                return;
+            }
+            if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
+                gameBroadcast(String.format("%s is in check", game.blackUsername()), gameID);
+                return;
+            }
+            if (game.game().isInStalemate(ChessGame.TeamColor.WHITE)) {
+                gameBroadcast(String.format("%s has gotten themselves in a pickle (stalemate)", game.whiteUsername()), gameID);
+                return;
+            }
+            if (game.game().isInStalemate(ChessGame.TeamColor.BLACK)) {
+                gameBroadcast(String.format("%s has gotten themselves in a pickle (stalemate)", game.blackUsername()), gameID);
+
+            }
         } catch (Exception ex) {
             var message = ex.getMessage();
             var error = new ErrorMessage(message);
             connections.broadcastSelf(session, error);
         }
+    }
+
+    private void gameBroadcast(String message, Integer gameID) throws IOException {
+        var notif = new NotificationMessage(message);
+        connections.broadcast(null, notif, gameID);
     }
 
     private String uninterpretMove(ChessMove move) {
