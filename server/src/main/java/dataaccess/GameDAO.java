@@ -16,4 +16,8 @@ public interface GameDAO {
     boolean joinGame(int gameID, String playerColor, String username) throws DataAccessException;
 
     GameData getGame(int gameID) throws DataAccessException;
+
+    void leaveGame(int gameID, String username) throws DataAccessException;
+
+    void updateGame(GameData game) throws DataAccessException;
 }

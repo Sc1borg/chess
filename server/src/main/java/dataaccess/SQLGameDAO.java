@@ -113,4 +113,40 @@ public class SQLGameDAO implements GameDAO {
         }
         return true;
     }
+
+    public void leaveGame(int gameID, String username) throws DataAccessException {
+        String sql = "SELECT * FROM game WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, gameID);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                resultSet.next();
+                if (username.equals(resultSet.getString("whiteUsername"))) {
+                    try (PreparedStatement stmt1 = conn.prepareStatement("UPDATE game SET whiteUsername =? WHERE gameID = ?")) {
+                        stmt1.setString(1, null);
+                        stmt1.setInt(2, gameID);
+                        stmt1.executeUpdate();
+                    }
+                } else if (username.equals(resultSet.getString("blackUsername"))) {
+                    try (PreparedStatement stmt2 = conn.prepareStatement("UPDATE game SET blackUsername =? WHERE gameID = ?")) {
+                        stmt2.setString(1, null);
+                        stmt2.setInt(2, gameID);
+                        stmt2.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    public void updateGame(GameData game) throws DataAccessException {
+        String gameJson = gson.toJson(game.game());
+        String sql = "UPDATE game SET game =? WHERE gameID =?";
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, gameJson);
+            stmt.setInt(2, game.gameID());
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 }

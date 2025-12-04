@@ -72,4 +72,8 @@ public class UserService {
     public String getUsername(String authToken) throws DataAccessException {
         return DatabaseRegistry.getAuthDao().getUsername(authToken);
     }
+
+    public void leaveGame(int gameID, String username) throws DataAccessException {
+        DatabaseRegistry.getGameDao().leaveGame(gameID, username);
+    }
 }

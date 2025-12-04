@@ -47,4 +47,9 @@ public class InMemoryGameDAO implements GameDAO {
     public GameData getGame(int gameID) throws DataAccessException {
         return GAME_DATA_MAP.get(gameID);
     }
+
+    @Override
+    public void leaveGame(int gameID, String username) throws DataAccessException {
+        
+    }
 }

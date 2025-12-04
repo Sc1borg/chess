@@ -120,7 +120,7 @@ public class InnerRepl implements NotificationHandler {
         try {
             game.game().makeMove(move);
             Shared.redraw(game.game(), persp);
-            ws.makeMove(move.toString(), user.authToken(), game.gameID());
+            ws.makeMove(move, user.authToken(), game.gameID());
         } catch (Exception ex) {
             return ex.getMessage();
         }

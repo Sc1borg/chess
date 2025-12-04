@@ -37,8 +37,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                         makeMove(((MakeMoveCommand) action).getMove(), action.getAuthToken(), action.getGameID(), ctx.session);
                 case RESIGN -> resign(action.getAuthToken(), action.getGameID(), ctx.session);
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -59,16 +59,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void leave(String authToken, int gameID, Session session) throws IOException, DataAccessException {
         String username = userService.getUsername(authToken);
+        userService.leaveGame(gameID, username);
         var message = String.format("%s left the game", username);
         var notification = new NotificationMessage(message);
         connections.broadcast(session, notification);
         connections.remove(session);
     }
 
-    public void makeMove(String move, String authToken, int gameID, Session session) throws Exception {
+    public void makeMove(ChessMove move, String authToken, int gameID, Session session) throws Exception {
         try {
             String username = userService.getUsername(authToken);
-            var message = String.format("%s made move %s", username, move);
+            String moveString = uninterpretMove(move);
+            GameData game = gameService.getGame(gameID);
+            game.game().makeMove(move);
+            gameService.updateGame(game);
+            var message = String.format("%s made move %s", username, moveString);
             var notification = new NotificationMessage(message);
             connections.broadcast(null, notification);
         } catch (Exception ex) {
@@ -77,7 +82,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private String uninterpretMove(ChessMove move) {
-        String moveString = "";
+        char y = letter(move.getStartPosition().getRow());
+        char p = letter(move.getEndPosition().getRow());
+        int x = move.getStartPosition().getColumn();
+        int q = move.getEndPosition().getColumn();
+        return y + x + " " + p + q;
+    }
 
+    private char letter(int num) {
+        return switch (num) {
+            case 1 -> 'a';
+            case 2 -> 'b';
+            case 3 -> 'c';
+            case 4 -> 'd';
+            case 5 -> 'e';
+            case 6 -> 'f';
+            case 7 -> 'g';
+            case 8 -> 'h';
+            default -> 9;
+        };
     }
 }
