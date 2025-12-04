@@ -51,16 +51,22 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    private void connect(String authToken, int gameID, Session session) throws IOException, DataAccessException {
-        connections.add(session, gameID);
-        String username = userService.getUsername(authToken);
-        GameData game = gameService.getGame(gameID);
-        String color = username.equals(game.blackUsername()) ? "Black" : username.equals(game.whiteUsername()) ? "White" : "Observer";
-        var message = String.format("%s joined the game as %s", username, color);
-        var notification = new NotificationMessage(message);
-        var newMessage = new LoadGameMessage(game.game());
-        connections.broadcastSelf(session, newMessage);
-        connections.broadcast(session, notification, gameID);
+    private void connect(String authToken, int gameID, Session session) throws IOException {
+        try {
+            connections.add(session, gameID);
+            String username = userService.getUsername(authToken);
+            GameData game = gameService.getGame(gameID);
+            String color = username.equals(game.blackUsername()) ? "Black" : username.equals(game.whiteUsername()) ? "White" : "Observer";
+            var message = String.format("%s joined the game as %s", username, color);
+            var notification = new NotificationMessage(message);
+            var newMessage = new LoadGameMessage(game.game());
+            connections.broadcastSelf(session, newMessage);
+            connections.broadcast(session, notification, gameID);
+        } catch (Exception e) {
+            var message = e.getMessage();
+            var error = new ErrorMessage(message);
+            connections.broadcastSelf(session, error);
+        }
     }
 
     private void leave(String authToken, int gameID, Session session) throws IOException, DataAccessException {
