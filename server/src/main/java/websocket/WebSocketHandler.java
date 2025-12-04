@@ -52,7 +52,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.add(session);
         String username = userService.getUsername(authToken);
         GameData game = gameService.getGame(gameID);
-        String color = username.equals(game.blackUsername()) ? "Black" : "White";
+        String color = username.equals(game.blackUsername()) ? "Black" : username.equals(game.whiteUsername()) ? "White" : "Observer";
         var message = String.format("%s joined the game as %s", username, color);
         var notification = new NotificationMessage(message);
         var newMessage = new LoadGameMessage(game.game());

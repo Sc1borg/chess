@@ -143,7 +143,7 @@ public class MiddleRepl {
         }
         try {
             GameData game = getGame(params[0]);
-            new ObserverRepl(game).run();
+            new ObserverRepl(server, user, game).run();
         } catch (Exception e) {
             return e.getMessage();
         }

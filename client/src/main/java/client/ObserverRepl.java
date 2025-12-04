@@ -2,7 +2,10 @@ package client;
 
 import chess.ChessGame;
 import client.websocket.NotificationHandler;
+import client.websocket.WebSocketFacade;
 import model.GameData;
+import model.LoginResult;
+import server.ServerFacade;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -17,13 +20,23 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_YELLOW;
 public class ObserverRepl implements NotificationHandler {
     private final GameData game;
     private ChessGame board;
+    private final LoginResult user;
+    private final WebSocketFacade ws;
 
-    public ObserverRepl(GameData game) {
+    public ObserverRepl(ServerFacade server, LoginResult user, GameData game) {
         this.game = game;
+        this.user = user;
+        String serverUrl = server.getUrl();
+        try {
+            ws = new WebSocketFacade(serverUrl, this);
+            ws.joinGame(user.authToken(), game.gameID());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 
     public void run() {
-        PrintBoard.highlight(game.game(), null, ChessGame.TeamColor.WHITE);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -68,11 +81,18 @@ public class ObserverRepl implements NotificationHandler {
     @Override
     public void notify(ServerMessage notification) {
         if (notification instanceof LoadGameMessage) {
+            System.out.println();
             board = ((LoadGameMessage) notification).getGame();
+            Shared.redraw(board, ChessGame.TeamColor.WHITE);
+            Shared.printNew();
         } else if (notification instanceof NotificationMessage) {
+            System.out.println();
             System.out.println(SET_TEXT_COLOR_YELLOW + ((NotificationMessage) notification).getMessage());
+            Shared.printNew();
         } else if (notification instanceof ErrorMessage) {
+            System.out.println();
             System.out.println(SET_TEXT_COLOR_RED + ((ErrorMessage) notification).getErrorMessage());
+            Shared.printNew();
         }
     }
 }
