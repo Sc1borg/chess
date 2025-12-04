@@ -94,6 +94,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             return;
         }
         game.game().setOver();
+        gameService.updateGame(game);
         var message = String.format("%s has resigned", username);
         var notification = new NotificationMessage(message);
         connections.broadcast(null, notification, gameID);
