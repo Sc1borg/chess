@@ -1,6 +1,7 @@
 package websocket.messages;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 
 public class LoadGameMessage extends ServerMessage {
     ChessGame game;
@@ -20,8 +21,6 @@ public class LoadGameMessage extends ServerMessage {
 
     @Override
     public String toString() {
-        return "LoadGameMessage{" +
-                "game=" + game +
-                '}';
+        return new Gson().toJson(this);
     }
 }

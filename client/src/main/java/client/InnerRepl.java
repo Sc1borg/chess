@@ -42,7 +42,6 @@ public class InnerRepl implements NotificationHandler {
     }
 
     public void run() {
-        PrintBoard.highlight(game.game(), null, persp);
         Scanner scanner = new Scanner(System.in);
         String result = "";
         while (!result.equals("quit")) {
@@ -88,7 +87,7 @@ public class InnerRepl implements NotificationHandler {
     }
 
     private String move(String[] params) {
-        if (game.game().getTeamTurn() != persp) {
+        if (board.getTeamTurn() != persp) {
             return "not your turn";
         }
         ChessPiece.PieceType promo = null;
@@ -118,8 +117,7 @@ public class InnerRepl implements NotificationHandler {
             return e.getMessage();
         }
         try {
-            game.game().makeMove(move);
-            Shared.redraw(game.game(), persp);
+            board.makeMove(move);
             ws.makeMove(move, user.authToken(), game.gameID());
         } catch (Exception ex) {
             return ex.getMessage();
@@ -163,13 +161,19 @@ public class InnerRepl implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.println("The problem is here");
         if (notification instanceof LoadGameMessage) {
+            System.out.println();
             board = ((LoadGameMessage) notification).getGame();
+            Shared.redraw(board, persp);
+            Shared.printNew();
         } else if (notification instanceof NotificationMessage) {
-            System.out.println(SET_TEXT_COLOR_YELLOW + ((NotificationMessage) notification).getMessage());
+            System.out.println();
+            System.out.print(SET_TEXT_COLOR_YELLOW + ((NotificationMessage) notification).getMessage());
+            Shared.printNew();
         } else if (notification instanceof ErrorMessage) {
-            System.out.println(SET_TEXT_COLOR_RED + ((ErrorMessage) notification).getErrorMessage());
+            System.out.println();
+            System.out.print(SET_TEXT_COLOR_RED + ((ErrorMessage) notification).getErrorMessage());
+            Shared.printNew();
         }
     }
 }

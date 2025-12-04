@@ -5,7 +5,10 @@ import com.google.gson.Gson;
 import jakarta.websocket.*;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,11 +31,16 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    System.out.println(message);
+                    ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
                     NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
-                    System.out.println("hello");
-                    System.out.println(notification);
-                    notificationHandler.notify(notification);
+                    LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                    if (notification.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+                        notificationHandler.notify(notification);
+                    } else if (errorMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+                        notificationHandler.notify(errorMessage);
+                    } else if (loadGameMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+                        notificationHandler.notify(loadGameMessage);
+                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

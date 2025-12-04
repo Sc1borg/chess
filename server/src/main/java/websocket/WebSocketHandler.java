@@ -10,6 +10,7 @@ import service.GameService;
 import service.UserService;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
@@ -54,6 +55,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String color = username.equals(game.blackUsername()) ? "Black" : "White";
         var message = String.format("%s joined the game as %s", username, color);
         var notification = new NotificationMessage(message);
+        var newMessage = new LoadGameMessage(game.game());
+        connections.broadcastSelf(session, newMessage);
         connections.broadcast(session, notification);
     }
 
@@ -84,6 +87,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             gameService.updateGame(game);
             var message = String.format("%s made move %s", username, moveString);
             var notification = new NotificationMessage(message);
+            var newMessage = new LoadGameMessage(game.game());
+            connections.broadcastSelf(session, newMessage);
             connections.broadcast(session, notification);
         } catch (Exception ex) {
             throw new Exception(ex.getMessage());
